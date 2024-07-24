@@ -13,7 +13,7 @@ git clone https://github.com/qasimmahmood95/playwright-demo-ts.git
 2. Navigate to the project directory:
 
 ```bash
-cd web-slinger
+cd playwright-demo-ts
 ```
 
 3. Install the project dependencies:
@@ -24,7 +24,11 @@ npm install
 
 ## Running the Tests
 
-You can run my solution using ```npx playwright test```
+You can run my solution using:
+
+``` bash
+npx playwright test
+```
 
 ## Cool Features
 
@@ -32,7 +36,7 @@ You can run my solution using ```npx playwright test```
 
     I'm following how [the Playwright docs](https://playwright.dev/docs/pom) recommed implementing POM. That is, I have all my locators in a constructor in a Page file
    
-    I then created separate functions to interact with each locator. This isn't strictly necessary, but I find this abstraction makes for much nicer-looking and readable tests
+    I then created separate functions to interact with each locator. This isn't strictly necessary, but I find this abstraction makes for much nicer-looking and more readable tests
 
 3. HTML Report
 
