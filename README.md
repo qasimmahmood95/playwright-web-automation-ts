@@ -31,6 +31,7 @@ You can run my solution using ```npx playwright test```
 1. Page Object Model
 
     I'm following how [the Playwright docs](https://playwright.dev/docs/pom) recommed implementing POM. That is, I have all my locators in a constructor in a Page file
+   
     I then created separate functions to interact with each locator. This isn't strictly necessary, but I find this abstraction makes for much nicer-looking and readable tests
 
 3. HTML Report
@@ -40,12 +41,13 @@ You can run my solution using ```npx playwright test```
 4. Manual & Automatic CI Trigger
 
     The tests will automatically run when you push new code to main or create a new PR to merge into main.
+   
     You can also use the manual trigger to run the tests from GitHub Actions directly.
 
-5. Fixtures
+6. Fixtures
 
     Coming soon!
 
-6. Accessibility (a11y) testing
+7. Accessibility (a11y) testing
 
     Coming soon!
