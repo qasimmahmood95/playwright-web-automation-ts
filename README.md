@@ -1,5 +1,6 @@
 # Playwright Demo with TypeScript
 ### My Playwright implementation for web automation
+[![Playwright Tests](https://github.com/qasimmahmood95/playwright-demo-ts/workflows/Playwright%20Tests/badge.svg)](https://github.com/qasimmahmood95/playwright-demo-ts/actions?query=workflow:"Playwright+Tests")
 
 ## Installation
 
