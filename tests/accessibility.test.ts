@@ -108,9 +108,17 @@ test.describe('Accessibility @a11y', () => {
     expect(results.violations).toEqual([]);
   });
 
+});
+
+/**
+ * Login page a11y test runs in an unauthenticated context.
+ * test.use() here clears both cookies AND localStorage (origins), which is
+ * required because SauceDemo stores its session in localStorage, not cookies.
+ */
+test.describe('Accessibility — login page (unauthenticated) @a11y', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('login page has no critical accessibility violations', async ({ page }) => {
-    // Login page is unauthenticated — clear storageState for this test only
-    await page.context().clearCookies();
     await page.goto('/');
 
     const results = await new AxeBuilder({ page })

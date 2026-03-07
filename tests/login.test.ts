@@ -1,6 +1,5 @@
 import { test, expect } from '../fixtures';
 import { Users } from '../test-data/users';
-import { env } from '../config/env';
 
 /**
  * Login tests always operate on an unauthenticated session.
