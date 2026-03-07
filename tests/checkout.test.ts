@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { test } from '../fixtures';
 import { Products } from '../utils/helpers';
 import { CheckoutData } from '../test-data/checkout';
 

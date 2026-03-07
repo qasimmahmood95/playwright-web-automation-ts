@@ -70,6 +70,6 @@ export default class ProductsPage {
   }
 
   async assertCartIsEmpty() {
-    await expect(this.shoppingCartBadge).not.toBeVisible();
+    await expect(this.shoppingCartBadge).toBeHidden();
   }
 }
