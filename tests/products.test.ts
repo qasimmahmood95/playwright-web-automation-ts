@@ -1,50 +1,85 @@
-import { test, expect } from '@playwright/test';
-import config from '../config/env';
-import LoginPage from '../pages/loginPage';
-import ProductsPage from '../pages/productsPage';
+import { test, expect } from '../fixtures';
+import { Products } from '../utils/helpers';
 
-const { url, password, username, locked_username } = config;
-
-test.beforeEach(async ({ page }, testInfo) => {
-  const login = new LoginPage(page);
-
-  console.log(`Running ${testInfo.title}`);
-
-  await page.goto(url);
-  await login.checkSwagLabsLogo();
+/**
+ * Products tests start from an authenticated session (storageState from global-setup).
+ * afterEach resets cart state via the sidebar to ensure test isolation.
+ */
+test.beforeEach(async ({ page }) => {
+  await page.goto('/inventory.html');
 });
 
-test.afterEach(async ({ page }) => {
-  const login = new LoginPage(page);
-
-  await login.clickOpenSidebarMenuButton();
-  await login.clickResetAppStateButton();
-  await login.clickLogoutButton();
+test.afterEach(async ({ loginPage }) => {
+  await loginPage.resetAndLogout();
 });
 
-test('Standard user can add items to the basket and remove them', async ({ page }) => {
-  const login = new LoginPage(page);
-  const products = new ProductsPage(page);
-  await login.login(username, password);
+test.describe('Products — smoke @smoke', () => {
+  test('inventory page displays the products title', async ({ productsPage }) => {
+    await productsPage.checkTitle('Products');
+  });
 
-  await products.clickBikeLightTitle();
-  await products.clickAddToCartButton();
-  await products.checkShoppingCartHasItems(1);
-  await products.clickRemoveButton();
-  await products.checkShoppingCartHasItems(0);
-  await products.clickBackToProductsButton();
+  test('adding a single item to the cart updates the badge count', async ({ productsPage }) => {
+    await productsPage.addToCart(Products.ONESIE).click();
+    await productsPage.assertCartBadgeCount(1);
+  });
 
-  await products.clickOnesieAddToCartButton();
-  await products.checkOnesieRemoveButton();
-  await products.checkShoppingCartHasItems(1);
-  await products.clickBikeLightAddToCartButton();
-  await products.checkBikeLightRemoveButton();
+  test('removing an item from the cart clears the badge', async ({ productsPage }) => {
+    await productsPage.addToCart(Products.ONESIE).click();
+    await productsPage.assertCartBadgeCount(1);
+    await productsPage.removeFromCart(Products.ONESIE).click();
+    await productsPage.assertCartIsEmpty();
+  });
+});
 
-  await products.clickShoppingCartButton();
-  await products.checkTitle('Your Cart');
+test.describe('Products — regression @regression', () => {
+  test('adding multiple items to the cart shows correct badge count', async ({ productsPage }) => {
+    await productsPage.addToCart(Products.ONESIE).click();
+    await productsPage.addToCart(Products.BIKE_LIGHT).click();
+    await productsPage.assertCartBadgeCount(2);
+  });
 
-  await products.clickOnesieRemoveButton();
-  await products.checkShoppingCartHasItems(1);
-  await products.clickBikeLightRemoveButton();
-  await products.checkShoppingCartHasItems(0);
+  test('navigating to the cart shows the correct page title', async ({ productsPage }) => {
+    await productsPage.addToCart(Products.ONESIE).click();
+    await productsPage.clickShoppingCartButton();
+    await productsPage.checkTitle('Your Cart');
+  });
+
+  test('navigating to a product detail page and adding to cart from there', async ({
+    productsPage,
+  }) => {
+    await productsPage.productTitleLink(0).click();
+    await productsPage.clickAddToCartButton();
+    await productsPage.assertCartBadgeCount(1);
+    await productsPage.clickBackToProductsButton();
+    await productsPage.checkTitle('Products');
+  });
+
+  test('removing an item from within the product detail page clears the badge', async ({
+    productsPage,
+  }) => {
+    await productsPage.productTitleLink(0).click();
+    await productsPage.clickAddToCartButton();
+    await productsPage.assertCartBadgeCount(1);
+    await productsPage.clickRemoveButton();
+    await productsPage.assertCartIsEmpty();
+  });
+
+  test('removing items from the cart page updates the badge correctly', async ({
+    productsPage,
+  }) => {
+    await productsPage.addToCart(Products.ONESIE).click();
+    await productsPage.addToCart(Products.BIKE_LIGHT).click();
+    await productsPage.assertCartBadgeCount(2);
+
+    await productsPage.clickShoppingCartButton();
+    await productsPage.removeFromCart(Products.ONESIE).click();
+    await productsPage.assertCartBadgeCount(1);
+
+    await productsPage.removeFromCart(Products.BIKE_LIGHT).click();
+    await productsPage.assertCartIsEmpty();
+  });
+
+  test('cart badge is not visible when no items have been added', async ({ productsPage }) => {
+    await productsPage.assertCartIsEmpty();
+  });
 });

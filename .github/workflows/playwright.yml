@@ -1,28 +1,79 @@
 name: Playwright Tests
+
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
-    branches: main
-  workflow_dispatch: 
+    branches: [main]
+  workflow_dispatch:
+
 jobs:
-  test:
-    timeout-minutes: 60
+  # ── Lint & type-check ────────────────────────────────────────────────────────
+  # Fast feedback: fail early on type errors or lint violations before running
+  # the full browser suite.
+  lint:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm i
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 5
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+  # ── E2E Tests (parallel per browser) ─────────────────────────────────────────
+  # Runs all three browsers in parallel. Each job uploads its own named report
+  # artifact so failures are easy to isolate by browser.
+  test:
+    name: E2E Tests (${{ matrix.browser }})
+    needs: [lint]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run Playwright tests
+        run: npm test -- --project=${{ matrix.browser }}
+        env:
+          CI: true
+          BASE_URL: ${{ vars.BASE_URL || 'https://www.saucedemo.com' }}
+          SAUCEDEMO_USERNAME: ${{ secrets.SAUCEDEMO_USERNAME || 'standard_user' }}
+          SAUCEDEMO_PASSWORD: ${{ secrets.SAUCEDEMO_PASSWORD || 'secret_sauce' }}
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

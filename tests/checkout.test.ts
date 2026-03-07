@@ -1,47 +1,79 @@
-import { test, expect } from '@playwright/test';
-import config from '../config/env';
-import LoginPage from '../pages/loginPage';
-import ProductsPage from '../pages/productsPage';
-import CheckoutPage from '../pages/checkoutPage';
+import { test, expect } from '../fixtures';
+import { Products } from '../utils/helpers';
+import { CheckoutData } from '../test-data/checkout';
 
-const { url, password, username, locked_username } = config;
-
-test.beforeEach(async ({ page }, testInfo) => {
-  const login = new LoginPage(page);
-
-  console.log(`Running ${testInfo.title}`);
-
-  await page.goto(url);
-  await login.checkSwagLabsLogo();
+/**
+ * Checkout tests start from an authenticated session.
+ * Each test navigates to the inventory page and adds an item before proceeding.
+ * afterEach resets and logs out to restore a clean state.
+ */
+test.beforeEach(async ({ page, productsPage }) => {
+  await page.goto('/inventory.html');
+  await productsPage.addToCart(Products.ONESIE).click();
+  await productsPage.assertCartBadgeCount(1);
+  await productsPage.clickShoppingCartButton();
 });
 
-test.afterEach(async ({ page }) => {
-  const login = new LoginPage(page);
-
-  await login.clickOpenSidebarMenuButton();
-  await login.clickResetAppStateButton();
-  await login.clickLogoutButton();
+test.afterEach(async ({ loginPage }) => {
+  await loginPage.resetAndLogout();
 });
 
-test('Standard user can add an item to the basket and checkout', async ({ page }) => {
-  const login = new LoginPage(page);
-  const products = new ProductsPage(page);
-  const checkout = new CheckoutPage(page);
+test.describe('Checkout — smoke @smoke', () => {
+  test('standard user can complete checkout end-to-end', async ({ checkoutPage }) => {
+    const { firstName, lastName, postalCode } = CheckoutData.VALID;
 
-  await login.login(username, password);
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.fillShippingDetails(firstName, lastName, postalCode);
+    await checkoutPage.clickContinueButton();
 
-  await products.clickOnesieAddToCartButton();
-  await products.checkShoppingCartHasItems(1);
-  await products.clickShoppingCartButton();
-  await products.checkTitle('Your Cart');
+    await checkoutPage.checkCheckoutInfoPage();
+    await checkoutPage.clickFinishButton();
+    await checkoutPage.checkOrderConfirmation();
+  });
+});
 
-  await checkout.clickCheckoutButton();
-  await checkout.enterFirstName('Testing');
-  await checkout.enterLastName('Tester');
-  await checkout.enterPostalCode('TE5');
-  await checkout.clickContinueButton();
+test.describe('Checkout — regression @regression', () => {
+  test('checkout form shows an error when first name is empty', async ({ checkoutPage }) => {
+    const { firstName, lastName, postalCode } = CheckoutData.EMPTY_FIRST_NAME;
 
-  await checkout.checkCheckoutInfoPage();
-  await checkout.clickFinishButton();
-  await checkout.checkOrderConfirmation();
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.fillShippingDetails(firstName, lastName, postalCode);
+    await checkoutPage.clickContinueButton();
+    await checkoutPage.checkFormError('Error: First Name is required');
+  });
+
+  test('checkout form shows an error when last name is empty', async ({ checkoutPage }) => {
+    const { firstName, lastName, postalCode } = CheckoutData.EMPTY_LAST_NAME;
+
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.fillShippingDetails(firstName, lastName, postalCode);
+    await checkoutPage.clickContinueButton();
+    await checkoutPage.checkFormError('Error: Last Name is required');
+  });
+
+  test('checkout form shows an error when postal code is empty', async ({ checkoutPage }) => {
+    const { firstName, lastName, postalCode } = CheckoutData.EMPTY_POSTAL_CODE;
+
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.fillShippingDetails(firstName, lastName, postalCode);
+    await checkoutPage.clickContinueButton();
+    await checkoutPage.checkFormError('Error: Postal Code is required');
+  });
+
+  test('cancelling checkout returns the user to the cart', async ({ checkoutPage, productsPage }) => {
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.clickCancelButton();
+    await productsPage.checkTitle('Your Cart');
+  });
+
+  test('order summary page displays payment, shipping, and total info', async ({
+    checkoutPage,
+  }) => {
+    const { firstName, lastName, postalCode } = CheckoutData.VALID;
+
+    await checkoutPage.clickCheckoutButton();
+    await checkoutPage.fillShippingDetails(firstName, lastName, postalCode);
+    await checkoutPage.clickContinueButton();
+    await checkoutPage.checkCheckoutInfoPage();
+  });
 });
