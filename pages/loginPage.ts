@@ -27,9 +27,7 @@ export default class LoginPage {
     await this.enterUsername(username);
     await this.enterPassword(password);
     await this.clickLoginButton();
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.checkSwagLabsLogo();
-    await this.page.waitForLoadState('domcontentloaded');
+    await expect(this.productsTitle).toBeVisible();
   }
 
   async enterUsername(username: string) {
@@ -64,10 +62,18 @@ export default class LoginPage {
     await expect(this.productsTitle).toBeVisible();
   }
 
-  async checkLoginError() {
+  /**
+   * Asserts the login error banner is visible and contains the expected message.
+   * Each error message on SauceDemo is prefixed with "Epic sadface: ".
+   */
+  async checkLoginError(expectedText: string) {
     await expect(this.loginError).toBeVisible();
-    await expect(this.loginError).toContainText(
-      'Epic sadface: Sorry, this user has been locked out.'
-    );
+    await expect(this.loginError).toContainText(expectedText);
+  }
+
+  async resetAndLogout() {
+    await this.clickOpenSidebarMenuButton();
+    await this.clickResetAppStateButton();
+    await this.clickLogoutButton();
   }
 }
