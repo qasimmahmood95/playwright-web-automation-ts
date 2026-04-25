@@ -12,7 +12,7 @@ End-to-end test suite for [saucedemo.com](https://www.saucedemo.com/) using Play
 
 ## Folder structure
 
-```
+```text
 playwright-web-automation-ts/
 ├── .claude/            # AI tooling context (PLAN.md with full implementation roadmap)
 ├── .github/            # CI/CD workflows, PR template, Dependabot, CODEOWNERS
@@ -75,21 +75,23 @@ npm run format
 1. Create `tests/myFeature.spec.ts`.
 2. Import `{ test, expect }` from `@/fixtures`.
 3. Tag tests with `@smoke` or `@regression` via the `tag` test option:
+
    ```ts
    test('my test', { tag: '@smoke' }, async ({ productsPage }) => { ... });
    ```
+
 4. Use the fixture-injected page objects — do not instantiate page objects manually with `new`.
 
 ---
 
 ## Selector strategy
 
-| Situation | Selector |
-|-----------|----------|
-| Element has a `data-test` attribute | `page.getByTestId('element-name')` |
+| Situation                           | Selector                                       |
+| ----------------------------------- | ---------------------------------------------- |
+| Element has a `data-test` attribute | `page.getByTestId('element-name')`             |
 | Element has a meaningful role/label | `page.getByRole(...)` / `page.getByLabel(...)` |
-| Element has stable visible text | `page.getByText(...)` |
-| None of the above | `page.locator(css)` as last resort |
+| Element has stable visible text     | `page.getByText(...)`                          |
+| None of the above                   | `page.locator(css)` as last resort             |
 
 `testIdAttribute` is set to `'data-test'` in `playwright.config.ts`. Never use positional CSS selectors (`:nth-child`) or XPath unless absolutely unavoidable.
 
@@ -123,6 +125,7 @@ npm run format
 ## CI
 
 GitHub Actions runs on push to `main` and on pull requests. The pipeline:
+
 1. Runs `typecheck`, `lint`, and `format:check` (gates the test job)
 2. Runs tests in parallel across Chromium, Firefox, and WebKit
 3. Uploads HTML and Monocart reports as artifacts (30-day retention)
