@@ -1,15 +1,17 @@
 # Plan: Repo Improvements — PR Breakdown
 
 ## Context
+
 Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SDET portfolio. 20 focused PRs split into two phases: **Phase 1** (highest signal, mergeable immediately) and **Phase 2** (enhancements). Conventional commit prefixes throughout. No Claude/Anthropic attribution.
 
 ---
 
-# Phase 1 — Foundation & High-Signal PRs
+## Phase 1 — Foundation & High-Signal PRs
 
-## Infrastructure & Tooling (PRs 1–8)
+### Infrastructure & Tooling (PRs 1–8)
 
-### PR 1 — `docs: add AGENTS.md and CLAUDE.md`
+#### PR 1 — `docs: add AGENTS.md and CLAUDE.md`
+
 **Branch:** `docs/agent-instructions`
 
 - **`AGENTS.md`** (< 200 lines) — agent-agnostic: project purpose, folder structure, how to run, conventions (`getByTestId`, fixture pattern, test tagging, selector strategy), what not to do, how to add a new page/test
@@ -22,7 +24,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 2 — `chore: add tsconfig, npm scripts, and commit lockfile`
+#### PR 2 — `chore: add tsconfig, npm scripts, and commit lockfile`
+
 **Branch:** `chore/tsconfig-and-scripts`
 
 - Create `tsconfig.json` (`strict: true`, `ES2022`, `commonjs`, includes all source dirs)
@@ -39,7 +42,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 3 — `chore: add ESLint with TypeScript and Playwright plugins`
+#### PR 3 — `chore: add ESLint with TypeScript and Playwright plugins`
+
 **Branch:** `chore/eslint`
 
 - Install: `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-playwright`, `prettier`
@@ -52,7 +56,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 4 — `chore: move credentials to environment variables`
+#### PR 4 — `chore: move credentials to environment variables`
+
 **Branch:** `chore/dotenv`
 
 - Install: `dotenv`
@@ -68,7 +73,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 5 — `chore: add pre-commit hooks with Husky and lint-staged`
+#### PR 5 — `chore: add pre-commit hooks with Husky and lint-staged`
+
 **Branch:** `chore/husky`
 
 - Install: `husky`, `lint-staged`
@@ -82,7 +88,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 6 — `chore: add Dependabot, PR template, and CODEOWNERS`
+#### PR 6 — `chore: add Dependabot, PR template, and CODEOWNERS`
+
 **Branch:** `chore/github-config`
 
 - Create `.github/dependabot.yml` — weekly npm + GitHub Actions updates targeting `main`
@@ -94,7 +101,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 7 — `ci: improve GitHub Actions pipeline`
+#### PR 7 — `ci: improve GitHub Actions pipeline`
+
 **Branch:** `ci/pipeline-improvements`
 
 - Add `lint` job (`typecheck`, `lint`, `format:check`) that gates the `test` job
@@ -110,7 +118,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 8 — `feat: add Monocart reporting`
+#### PR 8 — `feat: add Monocart reporting`
+
 **Branch:** `feat/monocart-reporter`
 
 - Install: `monocart-reporter` — pure JavaScript, no Java dependency, visually rich alternative to Allure
@@ -124,9 +133,10 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-## Framework Patterns (PRs 9–13)
+### Framework Patterns (PRs 9–13)
 
-### PR 9 — `fix: code quality and Playwright config improvements`
+#### PR 9 — `fix: code quality and Playwright config improvements`
+
 **Branch:** `fix/code-quality`
 
 - `pages/productsPage.ts:83` — `==` → `===`
@@ -141,7 +151,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 10 — `feat: add Playwright fixtures`
+#### PR 10 — `feat: add Playwright fixtures`
+
 **Branch:** `feat/fixtures`
 
 - Create `fixtures/index.ts` — extends `base.test` with `loginPage`, `productsPage`, `checkoutPage` fixture props
@@ -153,7 +164,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 11 — `feat: add storageState authentication`
+#### PR 11 — `feat: add storageState authentication`
+
 **Branch:** `feat/storage-state`
 
 - Create `global-setup.ts` — logs in as `standard_user`, saves `.auth/user.json`
@@ -166,7 +178,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 12 — `feat: externalise test data and add dynamic locators`
+#### PR 12 — `feat: externalise test data and add dynamic locators`
+
 **Branch:** `feat/test-data`
 
 - Create `test-data/users.ts` — typed `Users` const covering all 6 SauceDemo user types
@@ -180,7 +193,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 13 — `feat: multi-role authentication with storageState`
+#### PR 13 — `feat: multi-role authentication with storageState`
+
 **Branch:** `feat/multi-role-storage-state`
 
 - Update `global-setup.ts` to generate separate auth state: `.auth/standard-user.json`, `.auth/problem-user.json`
@@ -192,9 +206,10 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-## Test Coverage (PRs 14–16)
+### Test Coverage (PRs 14–16)
 
-### PR 14 — `test: improve test coverage, tagging, and structure`
+#### PR 14 — `test: improve test coverage, tagging, and structure`
+
 **Branch:** `test/coverage-improvements`
 
 - Tag tests `@smoke` / `@regression` via `{ tag: '@smoke' }` option
@@ -208,7 +223,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 15 — `test: add accessibility tests`
+#### PR 15 — `test: add accessibility tests`
+
 **Branch:** `test/accessibility`
 
 - Install: `@axe-core/playwright`
@@ -222,7 +238,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 16 — `test: add network interception tests`
+#### PR 16 — `test: add network interception tests`
+
 **Branch:** `test/network-interception`
 
 - Create `tests/network.test.ts` using `page.route()`:
@@ -235,9 +252,12 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-# Phase 2 — Enhancements
+## Phase 2 — Enhancements
 
-### PR 17 — `test: add visual regression tests`
+### Enhancements (PRs 17–20)
+
+#### PR 17 — `test: add visual regression tests`
+
 **Branch:** `test/visual-regression`
 
 - Create `tests/visual.test.ts` using `toHaveScreenshot()` for key pages under `standard_user` and `problem_user`
@@ -250,7 +270,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 18 — `test: add performance tests`
+#### PR 18 — `test: add performance tests`
+
 **Branch:** `test/performance`
 
 - Create `tests/performance.test.ts` using `page.evaluate(() => window.performance.getEntriesByType('navigation')[0])` — uses standard Web Performance API, works across Chromium, Firefox, and WebKit (unlike `page.metrics()` which is Chromium/CDP only)
@@ -263,7 +284,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 19 — `chore: add Dockerfile for containerised test execution`
+#### PR 19 — `chore: add Dockerfile for containerised test execution`
+
 **Branch:** `chore/docker`
 
 - Create `Dockerfile` — extends `mcr.microsoft.com/playwright` base image, runs `npm ci`, default `CMD ["npm", "test"]`
@@ -276,7 +298,8 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 
 ---
 
-### PR 20 — `refactor: extract shared page components`
+#### PR 20 — `refactor: extract shared page components`
+
 **Branch:** `refactor/page-components`
 
 - Create `components/HeaderComponent.ts` — cart icon badge, burger menu (currently duplicated across page objects)
@@ -289,6 +312,7 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 ---
 
 ## Execution Order
+
 **Phase 1:** 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16
 
 **Phase 2:** 17 → 18 → 19 → 20
@@ -298,12 +322,14 @@ Phase 1 PRs 1–8 are pure infrastructure and can be reviewed/merged in parallel
 ---
 
 ## Workflow
+
 Each PR will be created, then paused for review and approval before the next one begins. Each PR will be assigned to @qasimmahmood95.
 
 ## PR Description Format
+
 Each PR description follows this structure — concise, scannable, no padding:
 
-```
+```text
 Brief one-line context sentence explaining the motivation for this change.
 
 ## Changes
@@ -327,4 +353,5 @@ _Depends on: #N_ (omit if none)
 ```
 
 ## Merge Strategy
+
 Use **Squash and merge** for all PRs. This collapses each PR into a single commit on `main` using the PR title as the message — resulting in a clean, linear `git log` that reads like a professional changelog. Configure in GitHub: **Settings → General → Pull Requests → allow squash merging only**, default message set to "Pull request title and description."
