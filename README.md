@@ -1,6 +1,8 @@
-# Playwright Demo with TypeScript
-### My Playwright implementation for web automation
+# Playwright Web Automation — TypeScript
+
 [![Playwright Tests](https://github.com/qasimmahmood95/playwright-demo-ts/workflows/Playwright%20Tests/badge.svg)](https://github.com/qasimmahmood95/playwright-demo-ts/actions?query=workflow:"Playwright+Tests")
+
+End-to-end test suite for [saucedemo.com](https://www.saucedemo.com/) built with Playwright and TypeScript. See [ROADMAP.md](ROADMAP.md) for the full improvement roadmap. Agent instructions are in [AGENTS.md](AGENTS.md).
 
 ## Installation
 
