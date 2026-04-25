@@ -1,60 +1,120 @@
-# Playwright Web Automation — TypeScript
+# playwright-web-automation-ts
 
-[![Playwright Tests](https://github.com/qasimmahmood95/playwright-demo-ts/workflows/Playwright%20Tests/badge.svg)](https://github.com/qasimmahmood95/playwright-demo-ts/actions?query=workflow:"Playwright+Tests")
+Production-ready Playwright test suite for the [SauceDemo](https://www.saucedemo.com/) e-commerce flow, built with TypeScript.
 
-End-to-end test suite for [saucedemo.com](https://www.saucedemo.com/) built with Playwright and TypeScript. See [ROADMAP.md](ROADMAP.md) for the full improvement roadmap. Agent instructions are in [AGENTS.md](AGENTS.md).
+[![Playwright Tests](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml/badge.svg)](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml)
 
-## Installation
+## Tech stack
 
-1. Clone this repository to your local machine using Git:
+<!-- markdownlint-disable MD033 -->
+<table>
+  <tr>
+    <td>
+      <a target="_blank" href="https://playwright.dev/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/playwright/playwright-original.svg" alt="playwright" width="42" height="42" /></a>
+    </td>
+    <td>
+      <a target="_blank" href="https://www.typescriptlang.org/"><img src="https://skillicons.dev/icons?i=ts" alt="ts" width="42" height="42" /></a>
+    </td>
+    <td>
+      <a target="_blank" href="https://eslint.org/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/eslint/eslint-original.svg" alt="eslint" width="42" height="42" /></a>
+    </td>
+    <td>
+      <a target="_blank" href="https://github.com/"><img src="https://skillicons.dev/icons?i=github" alt="github" width="42" height="42" /></a>
+    </td>
+    <td>
+      <a target="_blank" href="https://github.com/features/actions"><img src="https://skillicons.dev/icons?i=githubactions" alt="githubactions" width="42" height="42" /></a>
+    </td>
+  </tr>
+</table>
+<!-- markdownlint-enable MD033 -->
+
+- [Playwright](https://playwright.dev/) - test framework
+- [TypeScript](https://www.typescriptlang.org/) - strict mode
+- [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) - linting and formatting
+- [GitHub Actions](https://github.com/features/actions) - CI/CD
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) v24 or higher (see `.nvmrc`)
+- [npm](https://www.npmjs.com/) (bundled with Node.js)
+- [nvm](https://github.com/nvm-sh/nvm) (optional, for Node version management)
+
+## Setup
 
 ```bash
-git clone https://github.com/qasimmahmood95/playwright-demo-ts.git
+# 1. Clone the repository
+git clone https://github.com/qasimmahmood95/playwright-web-automation-ts.git
+cd playwright-web-automation-ts
 
+# 2. Install dependencies
+npm ci
+
+# 3. Install browsers
+npx playwright install --with-deps
 ```
 
-2. Navigate to the project directory:
+## Run commands
 
 ```bash
-cd playwright-demo-ts
+# Run all tests (headless)
+npm test
+
+# Run with a visible browser
+npm run test:headed
+
+# Open Playwright UI mode
+npm run test:ui
+
+# Open the HTML report from the last run
+npm run test:report
 ```
 
-3. Install the project dependencies:
+## Code quality
 
 ```bash
-npm install
+# Type check
+npm run typecheck
+
+# Lint
+npm run lint
+
+# Lint and auto-fix
+npm run lint:fix
+
+# Format
+npm run format
 ```
 
-## Running the Tests
+## Project structure
 
-You can run my solution using:
-
-``` bash
-npx playwright test
+```text
+playwright-web-automation-ts/
+├── .claude/                  # AI tooling context (full implementation plan)
+├── .github/workflows/        # CI/CD pipeline
+├── config/
+│   └── env.ts                # Environment variable helpers
+├── pages/                    # Page Object Model classes
+│   ├── loginPage.ts
+│   ├── productsPage.ts
+│   └── checkoutPage.ts
+├── tests/                    # Test specs
+│   ├── login.test.ts
+│   ├── products.test.ts
+│   └── checkout.test.ts
+├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
+├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
+├── ROADMAP.md                # 20-PR improvement roadmap
+└── playwright.config.ts
 ```
 
-## Cool Features
+## CI/CD
 
-1. Page Object Model
+Tests run automatically on every push and pull request to `main` via GitHub Actions across Chromium, Firefox, and WebKit in parallel. The HTML report is uploaded as an artifact on every run (pass or fail) and retained for 5 days.
 
-    I'm following how [the Playwright docs](https://playwright.dev/docs/pom) recommed implementing POM. That is, I have all my locators in a constructor in a Page file
-   
-    I then created separate functions to interact with each locator. This isn't strictly necessary, but I find this abstraction makes for much nicer-looking and more readable tests
+## AI agent support
 
-3. HTML Report
+This repo includes first-class support for AI coding assistants:
 
-    This is an artifact I'm publishing in the GitHub Actions workflow after the tests finish.
-
-4. Manual & Automatic CI Trigger
-
-    The tests will automatically run when you push new code to main or create a new PR to merge into main.
-   
-    You can also use the manual trigger to run the tests from GitHub Actions directly.
-
-6. Fixtures
-
-    Coming soon!
-
-7. Accessibility (a11y) testing
-
-    Coming soon!
+- [`AGENTS.md`](AGENTS.md) — the single source of truth for project conventions, run commands, selector strategy, and best practices. Readable by any AI assistant (Cursor, Copilot, Claude, etc.)
+- [`CLAUDE.md`](CLAUDE.md) — a Claude Code-specific pointer to `AGENTS.md`
+- [`.claude/PLAN.md`](.claude/PLAN.md) — full 20-PR implementation roadmap with per-PR file lists and rationale
