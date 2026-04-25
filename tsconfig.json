@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "paths": {
+      "@/pages/*": ["./pages/*"],
+      "@/fixtures/*": ["./fixtures/*"],
+      "@/test-data/*": ["./test-data/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/config/*": ["./config/*"]
+    }
+  },
+  "include": [
+    "tests/**/*.ts",
+    "pages/**/*.ts",
+    "fixtures/**/*.ts",
+    "test-data/**/*.ts",
+    "utils/**/*.ts",
+    "config/**/*.ts",
+    "*.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
