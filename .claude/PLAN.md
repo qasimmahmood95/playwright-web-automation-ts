@@ -310,23 +310,16 @@ Brief one-line context sentence explaining the motivation for this change.
 - `file2.ts` — one-line rationale
 
 ## Layer affected
-- [ ] Test coverage (new/modified test cases)
-- [ ] Page objects / components
-- [ ] Fixtures / global setup
-- [ ] Config / tooling / scripts
-- [ ] CI/CD pipeline
-- [ ] Documentation only
+_Test coverage / Page objects / Fixtures / Config / CI/CD / Documentation_
 
 ## Affected test suites
 _@smoke / @regression / @a11y / @visual / @performance / N/A_
 
 ## Checklist
-Items pre-checked by the author indicate they have been verified before raising this PR.
 - [x] `npm test` passes
 - [x] `npm run lint` passes
 - [x] No `waitForTimeout` introduced
 - [x] No hardcoded credentials or inline test data
-- [ ] Breaking changes to fixture/page object API documented (if applicable)
 
 ## Dependencies
 _Depends on: #N_ (omit if none)
