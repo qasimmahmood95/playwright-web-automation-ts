@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import config from '../config/env';
 import LoginPage from '../pages/loginPage';
 import ProductsPage from '../pages/productsPage';
 import CheckoutPage from '../pages/checkoutPage';
 
-const { url, password, username, locked_username } = config;
+const { url, password, username } = config;
 
 test.beforeEach(async ({ page }, testInfo) => {
   const login = new LoginPage(page);
