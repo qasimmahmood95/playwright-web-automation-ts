@@ -54,8 +54,14 @@ npm run typecheck
 # Lint
 npm run lint
 
-# Format
+# Lint and auto-fix
+npm run lint:fix
+
+# Format all files
 npm run format
+
+# Check formatting without writing (used in CI)
+npm run format:check
 ```
 
 > **Environment variables:** copy `.env.example` to `.env` and fill in credentials before running locally. Never hardcode credentials anywhere in the codebase.

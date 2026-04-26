@@ -81,8 +81,11 @@ npm run lint
 # Lint and auto-fix
 npm run lint:fix
 
-# Format
+# Format all files
 npm run format
+
+# Check formatting without writing
+npm run format:check
 ```
 
 ## Project structure
