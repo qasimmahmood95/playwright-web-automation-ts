@@ -66,6 +66,8 @@ npm run format:check
 
 > **Environment variables:** copy `.env.example` to `.env` and fill in credentials before running locally. Never hardcode credentials anywhere in the codebase.
 
+> **Pre-commit hooks:** Husky runs `lint-staged` on every `git commit`. Staged `.ts` files are auto-fixed by ESLint and formatted by Prettier before the commit is created. Never bypass hooks with `--no-verify`.
+
 ---
 
 ## How to add a new page
