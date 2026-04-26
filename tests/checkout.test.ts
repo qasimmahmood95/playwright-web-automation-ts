@@ -60,7 +60,10 @@ test.describe('Checkout — regression @regression', () => {
     await checkoutPage.checkFormError('Error: Postal Code is required');
   });
 
-  test('cancelling checkout returns the user to the cart', async ({ checkoutPage, productsPage }) => {
+  test('cancelling checkout returns the user to the cart', async ({
+    checkoutPage,
+    productsPage,
+  }) => {
     await checkoutPage.clickCheckoutButton();
     await checkoutPage.clickCancelButton();
     await productsPage.checkTitle('Your Cart');
