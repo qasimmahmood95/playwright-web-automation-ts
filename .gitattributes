@@ -1,0 +1,5 @@
+# Normalise all text files to LF on commit, regardless of OS or core.autocrlf setting
+* text=auto eol=lf
+
+# Treat Playwright snapshot files as binary to avoid spurious diffs
+tests/**/*.png binary
