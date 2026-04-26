@@ -1,2 +1,5 @@
 *.yml
 *.yaml
+
+# Not a markdown file — Prettier misformats the glob syntax
+.github/CODEOWNERS
