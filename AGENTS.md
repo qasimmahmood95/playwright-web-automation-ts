@@ -138,7 +138,7 @@ GitHub Actions runs on push to `main` and on pull requests. The pipeline:
 2. Runs tests in parallel across Chromium, Firefox, and WebKit
 3. Uploads HTML and Monocart reports as artifacts (30-day retention)
 
-Credentials are passed as GitHub Actions secrets (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`).
+`SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME` and `SAUCEDEMO_LOCKED_USERNAME` are Actions variables (non-sensitive, public demo site values).
 
 ---
 
