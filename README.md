@@ -137,7 +137,12 @@ Dependencies are kept up to date automatically via [Dependabot](https://docs.git
 
 ## CI/CD
 
-Tests run automatically on every push and pull request to `main` via GitHub Actions across Chromium, Firefox, and WebKit in parallel. The HTML report is uploaded as an artifact on every run (pass or fail) and retained for 5 days.
+Every push and pull request to `main` runs two jobs:
+
+1. **Lint & type-check** — `typecheck`, `lint`, `format:check` must pass before tests run
+2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention)
+
+Credentials are injected from GitHub Actions secrets. HTML reports are available under **Actions → run → Artifacts**.
 
 ## AI agent support
 
