@@ -1,0 +1,3 @@
+# CLAUDE.md
+
+All agent instructions for this repository are in [`AGENTS.md`](AGENTS.md). Read that file before making any changes.

@@ -46,9 +46,7 @@ test.describe('Login — regression @regression', () => {
     await loginPage.resetAndLogout();
   });
 
-  test('performance glitch user can log in despite artificial latency', async ({
-    loginPage,
-  }) => {
+  test('performance glitch user can log in despite artificial latency', async ({ loginPage }) => {
     await loginPage.login(Users.PERFORMANCE_GLITCH.username, Users.PERFORMANCE_GLITCH.password);
     await loginPage.checkProductsTitle();
     await loginPage.resetAndLogout();
