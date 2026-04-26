@@ -49,9 +49,28 @@ cd playwright-web-automation-ts
 # 2. Install dependencies
 npm ci
 
-# 3. Install browsers
+# 3. Copy the environment variable template and fill in credentials
+cp .env.example .env
+
+# 4. Install browsers
 npx playwright install --with-deps
 ```
+
+## Environment variables
+
+Credentials are read from a `.env` file at the project root (gitignored). Copy the template to get started:
+
+```bash
+cp .env.example .env
+```
+
+| Variable                    | Description                   |
+| --------------------------- | ----------------------------- |
+| `SAUCEDEMO_USERNAME`        | Standard test user login      |
+| `SAUCEDEMO_PASSWORD`        | Shared password for all users |
+| `SAUCEDEMO_LOCKED_USERNAME` | Locked-out user login         |
+
+In CI these are passed as [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
 ## Run commands
 
