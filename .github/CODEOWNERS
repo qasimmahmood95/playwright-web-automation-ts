@@ -1,0 +1,10 @@
+# Default owner for all files
+* @qasimmahmood95
+
+# Test code and page objects require extra scrutiny
+/tests/ @qasimmahmood95
+/pages/ @qasimmahmood95
+/fixtures/ @qasimmahmood95
+
+# CI/CD pipeline
+/.github/ @qasimmahmood95
