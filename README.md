@@ -129,6 +129,10 @@ playwright-web-automation-ts/
 └── playwright.config.ts
 ```
 
+## Contributing
+
+Pre-commit hooks run automatically on every `git commit` via Husky and lint-staged. Staged `.ts` files are linted (`eslint --fix`) and formatted (`prettier --write`) before the commit is created. No manual step required — hooks run transparently.
+
 ## CI/CD
 
 Tests run automatically on every push and pull request to `main` via GitHub Actions across Chromium, Firefox, and WebKit in parallel. The HTML report is uploaded as an artifact on every run (pass or fail) and retained for 5 days.
