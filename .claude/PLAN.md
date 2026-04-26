@@ -112,9 +112,10 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 - Pin Node version to `.nvmrc` via `node-version-file: '.nvmrc'`
 - Increase artifact retention to 30 days
 - Switch `reporter` in `playwright.config.ts` to `[['github'], ['html']]` in CI and `[['list'], ['html']]` locally — `github` reporter shows `[chromium] ✓ test name` per line and adds inline PR annotations for failures
+- Add `.github/workflows/dependabot-auto-merge.yml` — auto-merge Dependabot patch/minor PRs after CI passes; block major bumps for manual review. Requires "Allow auto-merge" enabled in GitHub Settings → General → Pull Requests
 - **README** — fix broken clone URL, update CI badge, add CI section
 
-**Files:** `.github/workflows/playwright.yml`, `playwright.config.ts`, `README.md`
+**Files:** `.github/workflows/playwright.yml`, `.github/workflows/dependabot-auto-merge.yml`, `playwright.config.ts`, `README.md`
 
 ---
 
