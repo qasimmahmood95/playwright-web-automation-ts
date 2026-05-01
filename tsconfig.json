@@ -13,6 +13,7 @@
     "types": ["node"],
     "paths": {
       "@/pages/*": ["./pages/*"],
+      "@/fixtures": ["./fixtures/index"],
       "@/fixtures/*": ["./fixtures/*"],
       "@/test-data/*": ["./test-data/*"],
       "@/utils/*": ["./utils/*"],

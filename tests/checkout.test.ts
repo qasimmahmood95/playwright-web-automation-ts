@@ -1,47 +1,40 @@
-import { test } from '@playwright/test';
-import config from '../config/env';
-import LoginPage from '../pages/loginPage';
-import ProductsPage from '../pages/productsPage';
-import CheckoutPage from '../pages/checkoutPage';
+import { test } from '@/fixtures';
+import config from '@/config/env';
 
 const { password, username } = config;
 
-test.beforeEach(async ({ page }, testInfo) => {
-  const login = new LoginPage(page);
-
+test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
 
   await page.goto('/');
-  await login.checkSwagLabsLogo();
+  await loginPage.checkSwagLabsLogo();
 });
 
-test.afterEach(async ({ page }) => {
-  const login = new LoginPage(page);
-
-  await login.clickOpenSidebarMenuButton();
-  await login.clickResetAppStateButton();
-  await login.clickLogoutButton();
+test.afterEach(async ({ loginPage }) => {
+  await loginPage.clickOpenSidebarMenuButton();
+  await loginPage.clickResetAppStateButton();
+  await loginPage.clickLogoutButton();
 });
 
-test('Standard user can add an item to the basket and checkout', async ({ page }) => {
-  const login = new LoginPage(page);
-  const products = new ProductsPage(page);
-  const checkout = new CheckoutPage(page);
+test('Standard user can add an item to the basket and checkout', async ({
+  loginPage,
+  productsPage,
+  checkoutPage,
+}) => {
+  await loginPage.login(username, password);
 
-  await login.login(username, password);
+  await productsPage.clickOnesieAddToCartButton();
+  await productsPage.checkShoppingCartHasItems(1);
+  await productsPage.clickShoppingCartButton();
+  await productsPage.checkTitle('Your Cart');
 
-  await products.clickOnesieAddToCartButton();
-  await products.checkShoppingCartHasItems(1);
-  await products.clickShoppingCartButton();
-  await products.checkTitle('Your Cart');
+  await checkoutPage.clickCheckoutButton();
+  await checkoutPage.enterFirstName('Testing');
+  await checkoutPage.enterLastName('Tester');
+  await checkoutPage.enterPostalCode('TE5');
+  await checkoutPage.clickContinueButton();
 
-  await checkout.clickCheckoutButton();
-  await checkout.enterFirstName('Testing');
-  await checkout.enterLastName('Tester');
-  await checkout.enterPostalCode('TE5');
-  await checkout.clickContinueButton();
-
-  await checkout.checkCheckoutInfoPage();
-  await checkout.clickFinishButton();
-  await checkout.checkOrderConfirmation();
+  await checkoutPage.checkCheckoutInfoPage();
+  await checkoutPage.clickFinishButton();
+  await checkoutPage.checkOrderConfirmation();
 });
