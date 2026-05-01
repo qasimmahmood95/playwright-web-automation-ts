@@ -13,16 +13,16 @@ export default class CheckoutPage {
   readonly orderConfirmation: Locator;
 
   constructor(public page: Page) {
-    this.checkoutButton = page.locator('[data-test="checkout"]');
-    this.firstNameTextField = page.locator('[data-test="firstName"]');
-    this.lastNameTextField = page.locator('[data-test="lastName"]');
-    this.postalCodeTextField = page.locator('[data-test="postalCode"]');
-    this.continueButton = page.locator('[data-test="continue"]');
-    this.paymentInfo = page.locator('[data-test="payment-info-label"]');
-    this.shippingInfo = page.locator('[data-test="shipping-info-label"]');
-    this.totalInfo = page.locator('[data-test="total-info-label"]');
-    this.finishButton = page.locator('[data-test="finish"]');
-    this.orderConfirmation = page.locator('[data-test="complete-header"]');
+    this.checkoutButton = page.getByTestId('checkout');
+    this.firstNameTextField = page.getByTestId('firstName');
+    this.lastNameTextField = page.getByTestId('lastName');
+    this.postalCodeTextField = page.getByTestId('postalCode');
+    this.continueButton = page.getByTestId('continue');
+    this.paymentInfo = page.getByTestId('payment-info-label');
+    this.shippingInfo = page.getByTestId('shipping-info-label');
+    this.totalInfo = page.getByTestId('total-info-label');
+    this.finishButton = page.getByTestId('finish');
+    this.orderConfirmation = page.getByTestId('complete-header');
   }
 
   async clickCheckoutButton() {

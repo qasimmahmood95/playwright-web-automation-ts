@@ -3,14 +3,14 @@ import config from '../config/env';
 import LoginPage from '../pages/loginPage';
 import ProductsPage from '../pages/productsPage';
 
-const { url, password, username } = config;
+const { password, username } = config;
 
 test.beforeEach(async ({ page }, testInfo) => {
   const login = new LoginPage(page);
 
   console.log(`Running ${testInfo.title}`);
 
-  await page.goto(url);
+  await page.goto('/');
   await login.checkSwagLabsLogo();
 });
 

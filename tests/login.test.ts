@@ -2,14 +2,14 @@ import { test } from '@playwright/test';
 import config from '../config/env';
 import LoginPage from '../pages/loginPage';
 
-const { url, password, username, locked_username } = config;
+const { password, username, locked_username } = config;
 
 test.beforeEach(async ({ page }, testInfo) => {
   const login = new LoginPage(page);
 
   console.log(`Running ${testInfo.title}`);
 
-  await page.goto(url);
+  await page.goto('/');
   await login.checkSwagLabsLogo();
 });
 
