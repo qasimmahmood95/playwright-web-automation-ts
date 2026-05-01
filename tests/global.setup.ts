@@ -9,7 +9,7 @@ setup('authenticate as standard user', async ({ page }, testInfo) => {
   fs.mkdirSync('.auth', { recursive: true });
 
   await page.goto('/');
-  await page.getByTestId('user-name').fill(config.username);
+  await page.getByTestId('username').fill(config.username);
   await page.getByTestId('password').fill(config.password);
   await page.getByTestId('login-button').click();
   await page.waitForURL('**/inventory.html');
