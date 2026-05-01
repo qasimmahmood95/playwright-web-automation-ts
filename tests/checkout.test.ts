@@ -3,7 +3,7 @@ import { test } from '@/fixtures';
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
 
-  await page.goto('/');
+  await page.goto('/inventory.html');
   await loginPage.checkSwagLabsLogo();
 });
 
