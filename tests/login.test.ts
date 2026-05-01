@@ -1,33 +1,28 @@
-import { test } from '@playwright/test';
-import config from '../config/env';
-import LoginPage from '../pages/loginPage';
+import { test } from '@/fixtures';
+import config from '@/config/env';
 
 const { password, username, locked_username } = config;
 
-test.beforeEach(async ({ page }, testInfo) => {
-  const login = new LoginPage(page);
-
+test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
 
   await page.goto('/');
-  await login.checkSwagLabsLogo();
+  await loginPage.checkSwagLabsLogo();
 });
 
-test('Standard user can login', async ({ page }) => {
-  const login = new LoginPage(page);
-  await login.enterUsername(username);
-  await login.enterPassword(password);
-  await login.clickLoginButton();
-  await login.checkProductsTitle();
-  await login.clickOpenSidebarMenuButton();
-  await login.clickResetAppStateButton();
-  await login.clickLogoutButton();
+test('Standard user can login', async ({ loginPage }) => {
+  await loginPage.enterUsername(username);
+  await loginPage.enterPassword(password);
+  await loginPage.clickLoginButton();
+  await loginPage.checkProductsTitle();
+  await loginPage.clickOpenSidebarMenuButton();
+  await loginPage.clickResetAppStateButton();
+  await loginPage.clickLogoutButton();
 });
 
-test('Locked out user cannot login', async ({ page }) => {
-  const login = new LoginPage(page);
-  await login.enterUsername(locked_username);
-  await login.enterPassword(password);
-  await login.clickLoginButton();
-  await login.checkLoginError();
+test('Locked out user cannot login', async ({ loginPage }) => {
+  await loginPage.enterUsername(locked_username);
+  await loginPage.enterPassword(password);
+  await loginPage.clickLoginButton();
+  await loginPage.checkLoginError();
 });
