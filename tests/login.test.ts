@@ -3,6 +3,9 @@ import config from '@/config/env';
 
 const { password, username, locked_username } = config;
 
+// Login tests must run without stored auth — they exercise the login form itself
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
 

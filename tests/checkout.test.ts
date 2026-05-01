@@ -1,12 +1,9 @@
 import { test } from '@/fixtures';
-import config from '@/config/env';
-
-const { password, username } = config;
 
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
 
-  await page.goto('/');
+  await page.goto('/inventory.html');
   await loginPage.checkSwagLabsLogo();
 });
 
@@ -17,12 +14,9 @@ test.afterEach(async ({ loginPage }) => {
 });
 
 test('Standard user can add an item to the basket and checkout', async ({
-  loginPage,
   productsPage,
   checkoutPage,
 }) => {
-  await loginPage.login(username, password);
-
   await productsPage.clickOnesieAddToCartButton();
   await productsPage.checkShoppingCartHasItems(1);
   await productsPage.clickShoppingCartButton();
