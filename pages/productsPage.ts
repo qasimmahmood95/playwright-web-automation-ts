@@ -14,17 +14,17 @@ export default class ProductsPage {
   readonly bikeLightRemoveButton: Locator;
 
   constructor(public page: Page) {
-    this.addToCartButton = page.locator('[data-test="add-to-cart"]');
-    this.removeButton = page.locator('[data-test="remove"]');
-    this.backToProductsButton = page.locator('[data-test="back-to-products"]');
-    this.shoppingCartButton = page.locator('[data-test="shopping-cart-link"]');
-    this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
-    this.bikeLightTitle = page.locator('[data-test="item-0-title-link"]');
-    this.onesieAddToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-onesie"]');
-    this.onesieRemoveButton = page.locator('[data-test="remove-sauce-labs-onesie"]');
-    this.bikeLightRemoveButton = page.locator('[data-test="remove-sauce-labs-bike-light"]');
-    this.bikeLightAddToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]');
-    this.title = page.locator('[data-test="title"]');
+    this.addToCartButton = page.getByTestId('add-to-cart');
+    this.removeButton = page.getByTestId('remove');
+    this.backToProductsButton = page.getByTestId('back-to-products');
+    this.shoppingCartButton = page.getByTestId('shopping-cart-link');
+    this.shoppingCartBadge = page.getByTestId('shopping-cart-badge');
+    this.bikeLightTitle = page.getByTestId('item-0-title-link');
+    this.onesieAddToCartButton = page.getByTestId('add-to-cart-sauce-labs-onesie');
+    this.onesieRemoveButton = page.getByTestId('remove-sauce-labs-onesie');
+    this.bikeLightRemoveButton = page.getByTestId('remove-sauce-labs-bike-light');
+    this.bikeLightAddToCartButton = page.getByTestId('add-to-cart-sauce-labs-bike-light');
+    this.title = page.getByTestId('title');
   }
 
   async clickShoppingCartButton() {
@@ -77,10 +77,7 @@ export default class ProductsPage {
   }
 
   async checkShoppingCartHasItems(itemAmount: number) {
-    await this.page.waitForLoadState('load');
-    await this.page.waitForLoadState('domcontentloaded');
-
-    if (itemAmount == 0) {
+    if (itemAmount === 0) {
       await expect(this.shoppingCartBadge).not.toBeVisible();
     } else {
       const string = itemAmount.toString();

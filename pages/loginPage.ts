@@ -13,23 +13,21 @@ export default class LoginPage {
 
   constructor(public page: Page) {
     this.swagLabsLogo = page.getByText('Swag Labs');
-    this.usernameField = page.locator('[data-test="username"]');
-    this.passwordField = page.locator('[data-test="password"]');
-    this.loginButton = page.locator('[data-test="login-button"]');
-    this.productsTitle = page.locator('[data-test="title"]');
-    this.loginError = page.locator('[data-test="error"]');
+    this.usernameField = page.getByTestId('username');
+    this.passwordField = page.getByTestId('password');
+    this.loginButton = page.getByTestId('login-button');
+    this.productsTitle = page.getByTestId('title');
+    this.loginError = page.getByTestId('error');
     this.openSidebarMenuButton = page.getByRole('button', { name: 'Open Menu' });
-    this.resetAppStateButton = page.locator('[data-test="reset-sidebar-link"]');
-    this.logoutButton = page.locator('[data-test="logout-sidebar-link"]');
+    this.resetAppStateButton = page.getByTestId('reset-sidebar-link');
+    this.logoutButton = page.getByTestId('logout-sidebar-link');
   }
 
   async login(username: string, password: string) {
     await this.enterUsername(username);
     await this.enterPassword(password);
     await this.clickLoginButton();
-    await this.page.waitForLoadState('domcontentloaded');
     await this.checkSwagLabsLogo();
-    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async enterUsername(username: string) {
