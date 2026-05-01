@@ -148,7 +148,9 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 - Update all `page.goto(url)` → `page.goto('/')`
 - **AGENTS.md** — add selector strategy: `getByTestId` for `data-test` attrs, `getByRole`/`getByText` otherwise
 
-**Files:** `pages/productsPage.ts`, `pages/loginPage.ts`, `pages/checkoutPage.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `playwright.config.ts`, `AGENTS.md`
+- Add `.claude/agents/ci-reviewer/SUBAGENT.md` — reviews `playwright.yml` for correct secrets vs variables usage, pinned action versions, lint gate, browser matrix, artifact retention, and safe trigger configuration
+
+**Files:** `pages/productsPage.ts`, `pages/loginPage.ts`, `pages/checkoutPage.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `playwright.config.ts`, `AGENTS.md`, `.claude/agents/ci-reviewer/SUBAGENT.md` (new)
 
 ---
 
@@ -161,7 +163,9 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 - **README** — add Architecture section: POM + fixtures pattern and rationale
 - **AGENTS.md** — update "how to add a test" to use fixtures import
 
-**Files:** `fixtures/index.ts` (new), `tests/login.test.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `README.md`, `AGENTS.md`
+- Add `.claude/agents/test-reviewer/SUBAGENT.md` — reviews test files for correct fixture imports, `getByTestId` selectors, no hardcoded data, no `waitForTimeout`, web-first assertions
+
+**Files:** `fixtures/index.ts` (new), `tests/login.test.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `README.md`, `AGENTS.md`, `.claude/agents/test-reviewer/SUBAGENT.md` (new)
 
 ---
 
@@ -218,9 +222,10 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 - Split monolithic 30-step products test into 3–4 focused tests
 - Add negative checkout form tests using `CheckoutData` constants
 - Add `afterEach` to `tests/login.test.ts` for consistency
+- Update `.claude/agents/test-reviewer/SUBAGENT.md` — add tagging guidance (`{ tag: '@smoke' }` option, not describe block names)
 - **README** — add Test Strategy section
 
-**Files:** `tests/login.test.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `package.json`, `README.md`
+**Files:** `tests/login.test.ts`, `tests/products.test.ts`, `tests/checkout.test.ts`, `package.json`, `README.md`, `.claude/agents/test-reviewer/SUBAGENT.md`
 
 ---
 
@@ -233,9 +238,10 @@ Playwright + TypeScript test suite for saucedemo.com, targeting a Senior/Lead SD
 - `AxeBuilder.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])`
 - Login page uses `test.use({ storageState: { cookies: [], origins: [] } })`
 - Tag all `@a11y`
+- Add `.claude/agents/accessibility-reviewer/SUBAGENT.md` — reviews a11y tests for correct unauthenticated state override, WCAG tag coverage, full journey coverage, and `expect(results.violations).toEqual([])` assertions
 - **README** — add a11y to Test Strategy
 
-**Files:** `tests/accessibility.test.ts` (new), `package.json`, `README.md`
+**Files:** `tests/accessibility.test.ts` (new), `package.json`, `README.md`, `.claude/agents/accessibility-reviewer/SUBAGENT.md` (new)
 
 ---
 
