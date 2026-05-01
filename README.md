@@ -132,6 +132,16 @@ test('example', async ({ loginPage }) => {
 
 All test files import `{ test, expect }` from `@/fixtures`, not directly from `@playwright/test`.
 
+### storageState authentication
+
+`global-setup.ts` runs once before the test suite. It logs in as `standard_user`, waits for the inventory page, and saves the resulting cookies and local storage to `.auth/user.json`. Playwright then applies that state to every test context automatically — no test needs to go through the login form.
+
+Tests that specifically exercise the login page opt out of stored auth:
+
+```ts
+test.use({ storageState: { cookies: [], origins: [] } });
+```
+
 ## Project structure
 
 ```text

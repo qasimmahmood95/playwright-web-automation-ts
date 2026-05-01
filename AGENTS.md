@@ -114,7 +114,7 @@ npm run format:check
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
 - **Network interception:** use `page.route()` for stubbing/intercepting requests in tests.
-- **Authentication:** storageState (`.auth/*.json`) is used to skip UI login. Unauthenticated tests must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
+- **Authentication:** `global-setup.ts` logs in once and saves cookies/storage to `.auth/user.json`. Playwright applies this to every test context automatically — never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
 
 ---
 

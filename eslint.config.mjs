@@ -14,6 +14,11 @@ export default tseslint.config(
   {
     files: ['tests/**/*.ts'],
     ...playwright.configs['flat/recommended'],
+    rules: {
+      ...playwright.configs['flat/recommended'].rules,
+      // Assertions live inside page object methods — the rule cannot trace through them
+      'playwright/expect-expect': 'off',
+    },
   },
 
   // Node.js globals for CommonJS config files (e.g. .prettierrc.js, playwright.config.ts)
