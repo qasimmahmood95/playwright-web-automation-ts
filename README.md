@@ -107,6 +107,31 @@ npm run format
 npm run format:check
 ```
 
+## Architecture
+
+### Page Object Model
+
+Each page of the application has a dedicated class in `pages/` that encapsulates all locators and interactions for that page. Test files never use raw `page.locator()` calls — all selector logic lives in the page objects.
+
+### Fixtures
+
+`fixtures/index.ts` extends Playwright's base `test` with pre-instantiated page objects (`loginPage`, `productsPage`, `checkoutPage`). This eliminates boilerplate in every test file — page objects are injected by name rather than constructed with `new`.
+
+```ts
+// Before fixtures
+test('example', async ({ page }) => {
+  const login = new LoginPage(page);
+  await login.login(username, password);
+});
+
+// With fixtures
+test('example', async ({ loginPage }) => {
+  await loginPage.login(username, password);
+});
+```
+
+All test files import `{ test, expect }` from `@/fixtures`, not directly from `@playwright/test`.
+
 ## Project structure
 
 ```text
@@ -115,6 +140,8 @@ playwright-web-automation-ts/
 ├── .github/workflows/        # CI/CD pipeline
 ├── config/
 │   └── env.ts                # Environment variable helpers
+├── fixtures/
+│   └── index.ts              # Extended test with page object fixtures
 ├── pages/                    # Page Object Model classes
 │   ├── loginPage.ts
 │   ├── productsPage.ts
