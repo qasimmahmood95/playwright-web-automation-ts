@@ -7,4 +7,4 @@ export const Products = {
   redTShirt: 'test.allthethings()-t-shirt-(red)',
 } as const;
 
-export type ProductSlug = (typeof Products)[keyof typeof Products];
+export type ProductId = (typeof Products)[keyof typeof Products];

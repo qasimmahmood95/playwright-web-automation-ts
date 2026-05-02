@@ -1,5 +1,5 @@
 import { Page, expect, Locator } from '@playwright/test';
-import { ProductSlug } from '@/utils/helpers';
+import { ProductId } from '@/utils/helpers';
 
 export default class ProductsPage {
   readonly addToCartButton: Locator;
@@ -20,13 +20,13 @@ export default class ProductsPage {
     this.title = page.getByTestId('title');
   }
 
-  // Dynamic locators — build the data-test selector from a product slug
-  addToCartButtonFor(slug: ProductSlug): Locator {
-    return this.page.getByTestId(`add-to-cart-${slug}`);
+  // Dynamic locators — build the data-test selector from a product productId
+  addToCartButtonFor(productId: ProductId): Locator {
+    return this.page.getByTestId(`add-to-cart-${productId}`);
   }
 
-  removeButtonFor(slug: ProductSlug): Locator {
-    return this.page.getByTestId(`remove-${slug}`);
+  removeButtonFor(productId: ProductId): Locator {
+    return this.page.getByTestId(`remove-${productId}`);
   }
 
   async clickShoppingCartButton() {
@@ -49,16 +49,16 @@ export default class ProductsPage {
     await this.bikeLightTitle.click();
   }
 
-  async clickAddToCart(slug: ProductSlug) {
-    await this.addToCartButtonFor(slug).click();
+  async clickAddToCart(productId: ProductId) {
+    await this.addToCartButtonFor(productId).click();
   }
 
-  async clickRemove(slug: ProductSlug) {
-    await this.removeButtonFor(slug).click();
+  async clickRemove(productId: ProductId) {
+    await this.removeButtonFor(productId).click();
   }
 
-  async checkRemoveButton(slug: ProductSlug) {
-    await expect(this.removeButtonFor(slug)).toBeVisible();
+  async checkRemoveButton(productId: ProductId) {
+    await expect(this.removeButtonFor(productId)).toBeVisible();
   }
 
   async checkTitle(title: string) {
