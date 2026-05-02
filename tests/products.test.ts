@@ -1,4 +1,5 @@
 import { test } from '@/fixtures';
+import { Products } from '@/utils/helpers';
 
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);
@@ -21,17 +22,17 @@ test('Standard user can add items to the basket and remove them', async ({ produ
   await productsPage.checkShoppingCartHasItems(0);
   await productsPage.clickBackToProductsButton();
 
-  await productsPage.clickOnesieAddToCartButton();
-  await productsPage.checkOnesieRemoveButton();
+  await productsPage.clickAddToCart(Products.onesie);
+  await productsPage.checkRemoveButton(Products.onesie);
   await productsPage.checkShoppingCartHasItems(1);
-  await productsPage.clickBikeLightAddToCartButton();
-  await productsPage.checkBikeLightRemoveButton();
+  await productsPage.clickAddToCart(Products.bikeLight);
+  await productsPage.checkRemoveButton(Products.bikeLight);
 
   await productsPage.clickShoppingCartButton();
   await productsPage.checkTitle('Your Cart');
 
-  await productsPage.clickOnesieRemoveButton();
+  await productsPage.clickRemove(Products.onesie);
   await productsPage.checkShoppingCartHasItems(1);
-  await productsPage.clickBikeLightRemoveButton();
+  await productsPage.clickRemove(Products.bikeLight);
   await productsPage.checkShoppingCartHasItems(0);
 });
