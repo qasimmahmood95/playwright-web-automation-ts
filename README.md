@@ -158,10 +158,16 @@ playwright-web-automation-ts/
 │   ├── loginPage.ts
 │   ├── productsPage.ts
 │   └── checkoutPage.ts
+├── test-data/                # Typed constants for test inputs
+│   ├── users.ts              # All 6 SauceDemo user types
+│   └── checkout.ts           # Valid and invalid checkout form scenarios
 ├── tests/                    # Test specs
+│   ├── global.setup.ts       # storageState authentication setup
 │   ├── login.test.ts
 │   ├── products.test.ts
 │   └── checkout.test.ts
+├── utils/
+│   └── helpers.ts            # Product slug constants (Products)
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
 ├── ROADMAP.md                # 20-PR improvement roadmap

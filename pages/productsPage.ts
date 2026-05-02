@@ -1,4 +1,5 @@
 import { Page, expect, Locator } from '@playwright/test';
+import { ProductSlug } from '@/utils/helpers';
 
 export default class ProductsPage {
   readonly addToCartButton: Locator;
@@ -6,12 +7,8 @@ export default class ProductsPage {
   readonly backToProductsButton: Locator;
   readonly shoppingCartBadge: Locator;
   readonly shoppingCartButton: Locator;
-  readonly onesieAddToCartButton: Locator;
-  readonly onesieRemoveButton: Locator;
-  readonly bikeLightAddToCartButton: Locator;
   readonly bikeLightTitle: Locator;
   readonly title: Locator;
-  readonly bikeLightRemoveButton: Locator;
 
   constructor(public page: Page) {
     this.addToCartButton = page.getByTestId('add-to-cart');
@@ -20,11 +17,16 @@ export default class ProductsPage {
     this.shoppingCartButton = page.getByTestId('shopping-cart-link');
     this.shoppingCartBadge = page.getByTestId('shopping-cart-badge');
     this.bikeLightTitle = page.getByTestId('item-0-title-link');
-    this.onesieAddToCartButton = page.getByTestId('add-to-cart-sauce-labs-onesie');
-    this.onesieRemoveButton = page.getByTestId('remove-sauce-labs-onesie');
-    this.bikeLightRemoveButton = page.getByTestId('remove-sauce-labs-bike-light');
-    this.bikeLightAddToCartButton = page.getByTestId('add-to-cart-sauce-labs-bike-light');
     this.title = page.getByTestId('title');
+  }
+
+  // Dynamic locators — build the data-test selector from a product slug
+  addToCartButtonFor(slug: ProductSlug): Locator {
+    return this.page.getByTestId(`add-to-cart-${slug}`);
+  }
+
+  removeButtonFor(slug: ProductSlug): Locator {
+    return this.page.getByTestId(`remove-${slug}`);
   }
 
   async clickShoppingCartButton() {
@@ -47,28 +49,16 @@ export default class ProductsPage {
     await this.bikeLightTitle.click();
   }
 
-  async clickOnesieAddToCartButton() {
-    await this.onesieAddToCartButton.click();
+  async clickAddToCart(slug: ProductSlug) {
+    await this.addToCartButtonFor(slug).click();
   }
 
-  async checkOnesieRemoveButton() {
-    await expect(this.onesieRemoveButton).toBeVisible();
+  async clickRemove(slug: ProductSlug) {
+    await this.removeButtonFor(slug).click();
   }
 
-  async clickOnesieRemoveButton() {
-    await this.onesieRemoveButton.click();
-  }
-
-  async clickBikeLightAddToCartButton() {
-    await this.bikeLightAddToCartButton.click();
-  }
-
-  async checkBikeLightRemoveButton() {
-    await expect(this.bikeLightRemoveButton).toBeVisible();
-  }
-
-  async clickBikeLightRemoveButton() {
-    await this.bikeLightRemoveButton.click();
+  async checkRemoveButton(slug: ProductSlug) {
+    await expect(this.removeButtonFor(slug)).toBeVisible();
   }
 
   async checkTitle(title: string) {
