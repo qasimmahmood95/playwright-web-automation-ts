@@ -155,6 +155,40 @@ Tests that specifically exercise the login page opt out of stored auth:
 test.use({ storageState: { cookies: [], origins: [] } });
 ```
 
+## Test strategy
+
+### Test tags
+
+| Tag           | Scope                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| `@smoke`      | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change. |
+| `@regression` | The full functional suite. Every test carries it.                                        |
+
+Tags are applied through the test's `{ tag: [...] }` option — never encoded in describe-block names or titles:
+
+```ts
+test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => { ... });
+```
+
+Future suites from the [roadmap](ROADMAP.md) (`@a11y`, `@visual`, `@performance`) will follow the same scheme.
+
+```bash
+# Critical-path journeys only
+npm run test:smoke        # playwright test --grep @smoke
+
+# Full functional suite
+npm run test:regression   # playwright test --grep @regression
+```
+
+> `test:regression` currently matches the entire suite by design — every functional test carries the tag. The split earns its keep as dedicated non-functional suites (`@a11y`, `@visual`, `@performance`) join.
+
+### Test design principles
+
+- **Focused tests** — each test verifies one behaviour. Long journeys are split into focused tests rather than chained into a single mega-test.
+- **Data-driven negative tests** — invalid inputs and their expected errors live as typed constants in `test-data/`; checkout form validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
+- **Scoped teardown** — reset-app-state/logout teardown runs only on tests that mutate state (cart, checkout), not on read-only assertions.
+- **Role-based auth** — tests never log in through the UI; stored auth is loaded via the `role` fixture (see [Multi-role storageState authentication](#multi-role-storagestate-authentication) above).
+
 ## Project structure
 
 ```text
