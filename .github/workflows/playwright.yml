@@ -65,3 +65,61 @@ jobs:
           name: playwright-report-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 30
+      # Blob reports merge across browsers into the single Pages report.
+      # Rename per browser so the three don't collide when merged.
+      - name: Rename blob report
+        if: always()
+        run: |
+          if [ -f blob-report/report.zip ]; then
+            mv blob-report/report.zip blob-report/report-${{ matrix.browser }}.zip
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: blob-report-${{ matrix.browser }}
+          path: blob-report/
+          retention-days: 30
+
+  publish-report:
+    name: Publish report to Pages
+    needs: test
+    # Only publish the merged report from green main builds — not PRs (which
+    # would overwrite the public report, and forks can't reach Pages anyway).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Job-level permissions replace the top-level block, so contents: read is
+    # restated for checkout; pages/id-token are the Pages-deploy scopes.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Download blob reports
+        uses: actions/download-artifact@v7
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+      # The html reporter writes to playwright-report/ (its default), which the
+      # upload-pages-artifact step below consumes. merge-reports has no output
+      # flag — the folder is the html reporter default.
+      - name: Merge blobs into one HTML report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
