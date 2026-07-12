@@ -5,12 +5,6 @@ name: Update visual snapshots
 
 on:
   workflow_dispatch:
-  # TEMPORARY (removed before merge): lets the PR author trigger baseline
-  # generation by touching .github/baseline-request, since the authoring
-  # integration cannot call workflow_dispatch
-  push:
-    paths:
-      - '.github/baseline-request'
 
 permissions:
   contents: write # push regenerated baselines back to the branch
