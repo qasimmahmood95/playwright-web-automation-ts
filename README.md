@@ -211,7 +211,7 @@ SauceDemo is a fully client-side React app — login and inventory ship inside t
 - Product images **aborted** — the page must stay fully functional with broken images
 - Product images **stubbed** with a deterministic placeholder — the binary-response pattern visual tests will reuse
 - All **cross-origin traffic blocked** — the app must never depend on third-party availability
-- **Injected latency** on static assets — the page must still reach a usable state
+- **Injected latency** on product images — the page must still reach a usable state
 
 Interception helpers live in `utils/network.ts`; route patterns and latency constants are typed test data in `test-data/routes.ts`. Every interception test asserts its intercept counter fired, so route-pattern drift fails loudly instead of silently passing.
 

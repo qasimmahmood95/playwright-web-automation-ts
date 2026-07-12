@@ -69,13 +69,13 @@ test(
 );
 
 test(
-  'Inventory reaches a usable state under injected asset latency',
+  'Inventory reaches a usable state under injected image latency',
   { tag: '@regression' },
   async ({ page, productsPage }) => {
     const delayed = await delayRequests(
       page,
-      RoutePatterns.staticAssets,
-      NetworkConditions.assetLatencyMs
+      RoutePatterns.productImages,
+      NetworkConditions.imageLatencyMs
     );
 
     await page.goto('/inventory.html');
