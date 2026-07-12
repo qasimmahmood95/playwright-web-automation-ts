@@ -1,24 +1,22 @@
+import { faker } from '@faker-js/faker';
+
+// A fixed seed keeps the generated data realistic yet identical on every run,
+// so CI never flakes on random input and any failure reproduces exactly.
+faker.seed(20260712);
+
+const validInformation = {
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  postalCode: faker.location.zipCode(),
+};
+
 export const CheckoutData = {
-  valid: {
-    firstName: 'Testing',
-    lastName: 'Tester',
-    postalCode: 'TE5',
-  },
-  missingFirstName: {
-    firstName: '',
-    lastName: 'Tester',
-    postalCode: 'TE5',
-  },
-  missingLastName: {
-    firstName: 'Testing',
-    lastName: '',
-    postalCode: 'TE5',
-  },
-  missingPostalCode: {
-    firstName: 'Testing',
-    lastName: 'Tester',
-    postalCode: '',
-  },
+  valid: validInformation,
+  // Each invalid scenario reuses the valid data with exactly one field blanked,
+  // so the test isolates the effect of that single missing field.
+  missingFirstName: { ...validInformation, firstName: '' },
+  missingLastName: { ...validInformation, lastName: '' },
+  missingPostalCode: { ...validInformation, postalCode: '' },
 } as const;
 
 export const CheckoutErrors = {
