@@ -15,8 +15,12 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v3
 
+      # The Docker base image is excluded: CI never runs the container (it uses
+      # npx-installed browsers), so it can't catch a base-image bump that skews
+      # from the lockfile-pinned @playwright/test version. Image bumps get a
+      # manual review so they're aligned with the client version — bump both together.
       - name: Auto-merge patch and minor updates
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.metadata.outputs.package-ecosystem != 'docker'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
