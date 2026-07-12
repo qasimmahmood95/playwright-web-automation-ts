@@ -375,12 +375,15 @@ playwright-web-automation-ts/
 │   └── performance.ts        # Navigation-timing measurement helpers
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
+├── CONTRIBUTING.md           # Contributor workflow and conventions guide
 ├── Dockerfile                # Containerised test run on the Playwright Linux base image
 ├── ROADMAP.md                # 20-PR improvement roadmap
 └── playwright.config.ts
 ```
 
 ## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contributor guide (workflow, checks, and conventions), and [`AGENTS.md`](AGENTS.md) for the authoritative conventions reference. Bugs and feature requests go through the [issue templates](.github/ISSUE_TEMPLATE).
 
 Pre-commit hooks run automatically on every `git commit` via Husky and lint-staged. Staged `.ts` files are linted (`eslint --fix`) and formatted (`prettier --write`) before the commit is created. No manual step required; hooks run transparently.
 

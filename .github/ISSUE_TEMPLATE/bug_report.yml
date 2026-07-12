@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a test failure, flake, or incorrect behaviour in the suite.
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug. Please fill in the details below.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the problem, including any error output or report link.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `npm run test:...`
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Affected browsers
+      multiple: true
+      options:
+        - Chromium
+        - Firefox
+        - WebKit
+        - All
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version (`node -v`), and whether this was local, Docker, or CI.
+      placeholder: macOS 14, Node 24, local
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or report
+      description: Paste relevant test output, or attach the HTML report or trace.
+      render: shell
+    validations:
+      required: false
