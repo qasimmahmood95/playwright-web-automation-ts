@@ -1,0 +1,45 @@
+# Dependencies — reinstalled in-image via `npm ci` (host binaries may be platform-mismatched)
+node_modules
+npm-debug.log*
+
+# Version control / CI / editor / AI-tooling metadata — not needed at test runtime
+.git
+.gitignore
+.gitattributes
+.github
+.vscode
+.husky
+.claude
+
+# Secrets — credentials pass at RUNTIME via `docker run --env-file .env`, never baked into a layer
+.env
+.env.*
+
+# Playwright auth state — regenerated in-container by tests/global.setup.ts; may hold session tokens
+.auth
+
+# Test / build outputs — regenerated on every run
+test-results
+playwright-report
+blob-report
+playwright/.cache
+dist
+coverage
+
+# Docker + docs + dev-only tooling config — not needed to run the suite
+Dockerfile
+.dockerignore
+*.md
+.nvmrc
+.prettierrc.js
+.prettierignore
+eslint.config.mjs
+
+# Locally generated NON-Linux visual baselines only. The Linux baselines under
+# tests/visual.test.ts-snapshots/*-linux.png are intentionally KEPT in the build
+# context so `npm run test:visual` can compare inside the container.
+tests/**/*-darwin.png
+tests/**/*-win32.png
+
+# OS cruft
+.DS_Store
