@@ -48,6 +48,9 @@ npm run test:regression
 # Run accessibility scans
 npm run test:a11y
 
+# Run visual regression tests (baselines are Linux-only)
+npm run test:visual
+
 # Run with headed browser
 npm run test:headed
 
@@ -91,7 +94,7 @@ npm run format:check
 
 1. Create `tests/myFeature.test.ts`.
 2. Import `{ test, expect }` from `@/fixtures`.
-3. Tag every functional test `@regression`; critical-path journeys additionally get `@smoke`; non-functional suites carry their own tag (`@a11y`). Tags go through the `tag` test option — never in describe block names or test titles:
+3. Tag every functional test `@regression`; critical-path journeys additionally get `@smoke`; non-functional suites carry their own tag (`@a11y`, `@visual`). Tags go through the `tag` test option — never in describe block names or test titles:
 
    ```ts
    test('my test', { tag: ['@smoke', '@regression'] }, async ({ productsPage }) => { ... });
@@ -122,6 +125,7 @@ npm run format:check
 - **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
 - **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
 - **Accessibility:** a11y scans go through `utils/a11y.ts`; the known-violations baseline lives in `test-data/a11y.ts` with a comment per entry. Never use `disableRules()` to silence a finding.
+- **Visual baselines:** Linux-only, generated exclusively by the `update-snapshots.yml` workflow — never hand-edit PNGs or commit locally generated snapshots (darwin/win32 are gitignored). Re-baseline via the workflow and review baseline-diff commits image-by-image.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
@@ -151,6 +155,8 @@ GitHub Actions runs on push to `main` and on pull requests. The pipeline:
 3. Uploads HTML reports as artifacts (30-day retention)
 
 `SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME`, `SAUCEDEMO_LOCKED_USERNAME`, and `SAUCEDEMO_PROBLEM_USERNAME` are Actions variables (non-sensitive, public demo site values).
+
+A second, manually dispatched workflow (`update-snapshots.yml`) regenerates the visual baselines on a branch, commits them as `github-actions[bot]`, and re-dispatches the test workflow so the new head SHA gets a CI run.
 
 ---
 
