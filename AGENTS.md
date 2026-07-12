@@ -19,7 +19,7 @@ playwright-web-automation-ts/
 ├── config/             # Environment config (env.ts reads from process.env)
 ├── fixtures/           # Playwright fixture extensions (page object injection)
 ├── pages/              # Page Object Model classes
-├── test-data/          # Typed constants (users, checkout scenarios, a11y baseline)
+├── test-data/          # Typed constants (users, checkout scenarios, a11y baseline, route patterns)
 ├── tests/              # Test files (.test.ts)
 ├── utils/              # Shared helpers and utilities
 ├── AGENTS.md           # This file
@@ -117,15 +117,15 @@ npm run format:check
 ## Conventions
 
 - **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`, `SAUCEDEMO_PROBLEM_USERNAME`). Never hardcode credentials.
-- **Navigation:** use `page.goto('/')` — `baseURL` is set in `playwright.config.ts`.
-- **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary.
+- **Navigation:** navigate with relative paths against `baseURL` (`page.goto('/')`, `page.goto('/inventory.html')`) — `baseURL` comes from `config/env.ts` via `playwright.config.ts`.
+- **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary. Injected latency for traffic shaping lives inside `utils/network.ts` route handlers — never timers in test bodies.
 - **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
 - **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
 - **Accessibility:** a11y scans go through `utils/a11y.ts`; the known-violations baseline lives in `test-data/a11y.ts` with a comment per entry. Never use `disableRules()` to silence a finding.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
-- **Network interception:** use `page.route()` for stubbing/intercepting requests in tests.
+- **Network interception:** interception helpers live in `utils/network.ts` and route patterns in `test-data/routes.ts`. Register routes before `page.goto()`. Never put `expect()` inside a route handler. No `unroute()` teardown needed — context isolation cleans up. saucedemo is fully client-side: never stub app APIs that don't exist (there are no auth or product endpoints).
 - **Authentication:** `tests/global.setup.ts` is a Playwright setup project that logs in once per browser + role pair (`standard`, `problem`) and saves cookies/storage to `.auth/<browser>-<role>.json`. Tests load the `standard` state by default via the `role` fixture option in `fixtures/index.ts`; switch role with `test.use({ role: 'problem' })` at file or describe level. Roles are defined in `utils/auth.ts`; adding a role also means wiring its username env var through `config/env.ts`, `.env.example`, and the CI workflow `env` block — never log in inside a test. Never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
 
 ---
@@ -133,7 +133,7 @@ npm run format:check
 ## What not to do
 
 - Do not add `waitForTimeout` anywhere.
-- Do not hardcode credentials, URLs (other than `'/'`), or test data inline in test files.
+- Do not hardcode credentials, absolute URLs, or test data inline in test files. Relative paths under `baseURL` (e.g. `'/inventory.html'`) are fine; route glob patterns are test data and live in `test-data/routes.ts`.
 - Do not instantiate page objects manually in tests — use fixtures.
 - Do not skip pre-commit hooks (`--no-verify`).
 - Do not commit `.env`, `.auth/`, or any file containing secrets.

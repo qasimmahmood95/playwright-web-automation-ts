@@ -1,3 +1,9 @@
+import dotenv from 'dotenv';
+
+// Loaded here, not in playwright.config.ts — ES import hoisting would otherwise
+// evaluate this module before dotenv.config() ran, silently dropping .env overrides
+dotenv.config();
+
 const config = {
   url: 'https://www.saucedemo.com/',
   username: process.env.SAUCEDEMO_USERNAME || 'standard_user',

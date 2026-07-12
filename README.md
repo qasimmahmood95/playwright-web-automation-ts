@@ -204,6 +204,17 @@ Automated WCAG 2.0/2.1 A + AA scans run through [axe-core](https://github.com/de
 
 SauceDemo ships real accessibility defects, so the suite asserts **no new violations** rather than zero: known rule failures are pinned per page in `test-data/a11y.ts`, each with a comment naming the defect. A scan fails only on violations outside that baseline, and baselined rules that stop firing are soft-flagged as report annotations so the baseline can shrink over time. Full axe results are attached to the HTML report for every scan.
 
+### Network resilience
+
+SauceDemo is a fully client-side React app — login and inventory ship inside the JS bundle, with no auth or product APIs — so network tests target the traffic that actually exists: static bundles, product images, and third-party requests. Four `@regression` tests use `page.route()` interception:
+
+- Product images **aborted** — the page must stay fully functional with broken images
+- Product images **stubbed** with a deterministic placeholder — the binary-response pattern visual tests will reuse
+- All **cross-origin traffic blocked** — the app must never depend on third-party availability
+- **Injected latency** on product images — the page must still reach a usable state
+
+Interception helpers live in `utils/network.ts`; route patterns and latency constants are typed test data in `test-data/routes.ts`. Every interception test asserts its intercept counter fired, so route-pattern drift fails loudly instead of silently passing.
+
 ## Project structure
 
 ```text
@@ -221,17 +232,20 @@ playwright-web-automation-ts/
 ├── test-data/                # Typed constants for test inputs
 │   ├── users.ts              # All 6 SauceDemo user types
 │   ├── checkout.ts           # Valid and invalid checkout form scenarios
-│   └── a11y.ts               # Known accessibility violations baseline
+│   ├── a11y.ts               # Known accessibility violations baseline
+│   └── routes.ts             # Route patterns and traffic-shaping constants
 ├── tests/                    # Test specs
 │   ├── global.setup.ts       # storageState authentication setup
 │   ├── login.test.ts
 │   ├── products.test.ts
 │   ├── checkout.test.ts
-│   └── accessibility.test.ts # WCAG scans of the journey pages
+│   ├── accessibility.test.ts # WCAG scans of the journey pages
+│   └── network.test.ts       # Network interception and resilience tests
 ├── utils/
 │   ├── a11y.ts               # axe-core scan helper with baseline filtering
 │   ├── auth.ts               # Auth roles and storage-state file paths
-│   └── helpers.ts            # Product slug constants (Products)
+│   ├── helpers.ts            # Product slug constants (Products)
+│   └── network.ts            # Route-interception helpers with intercept counters
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
 ├── ROADMAP.md                # 20-PR improvement roadmap
