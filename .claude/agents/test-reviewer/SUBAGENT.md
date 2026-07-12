@@ -34,7 +34,8 @@ When reviewing test files, check:
 
 ## Tagging
 
-- Every functional test is tagged `@regression`; critical-path journeys additionally carry `@smoke`; non-functional suites (`@a11y`) carry their own tag instead
+- Every functional test is tagged `@regression`; critical-path journeys additionally carry `@smoke`; non-functional suites (`@a11y`, `@visual`) carry their own tag instead
+- Visual tests use explicit `.png` snapshot names; baselines come only from the update-snapshots workflow, never local runs
 - Tags are set via the `{ tag: ['@smoke', '@regression'] }` test option — not encoded in describe block names or test titles
 
 ## Network interception
