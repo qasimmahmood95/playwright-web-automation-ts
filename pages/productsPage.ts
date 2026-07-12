@@ -9,6 +9,7 @@ export default class ProductsPage {
   readonly shoppingCartButton: Locator;
   readonly bikeLightTitle: Locator;
   readonly title: Locator;
+  readonly productImages: Locator;
 
   constructor(public page: Page) {
     this.addToCartButton = page.getByTestId('add-to-cart');
@@ -18,6 +19,8 @@ export default class ProductsPage {
     this.shoppingCartBadge = page.getByTestId('shopping-cart-badge');
     this.bikeLightTitle = page.getByTestId('item-0-title-link');
     this.title = page.getByTestId('title');
+    // Anchored on the per-item img-link wrappers — same data-test pattern as item-0-title-link
+    this.productImages = page.getByTestId(/^item-\d+-img-link$/).locator('img');
   }
 
   // Dynamic locators — build the data-test selector from a product productId
@@ -64,6 +67,14 @@ export default class ProductsPage {
   async checkTitle(title: string) {
     await expect(this.title).toBeVisible();
     await expect(this.title).toContainText(title);
+  }
+
+  async getProductImageSources(): Promise<string[]> {
+    // evaluateAll does not auto-wait, so wait for the grid to render first
+    await this.productImages.first().waitFor();
+    return this.productImages.evaluateAll((images) =>
+      images.map((img) => img.getAttribute('src') ?? '')
+    );
   }
 
   async checkShoppingCartHasItems(itemAmount: number) {

@@ -19,7 +19,8 @@ export default defineConfig({
 
   projects: [
     // Setup projects run once per browser before their dependent test project.
-    // Each saves auth state to a browser-specific file so CI jobs remain isolated.
+    // Each logs in once per auth role and saves state to .auth/<browser>-<role>.json,
+    // so CI jobs remain isolated per browser.
     {
       name: 'setup:chromium',
       testMatch: '**/global.setup.ts',
@@ -36,20 +37,22 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
 
-    // Test projects depend on their respective setup project and load the saved auth state.
+    // Test projects depend on their respective setup project. The auth state
+    // each test loads is resolved per browser + role by the `role` fixture
+    // option in fixtures/index.ts (default: 'standard').
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: '.auth/chromium.json' },
+      use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup:chromium'],
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'], storageState: '.auth/firefox.json' },
+      use: { ...devices['Desktop Firefox'] },
       dependencies: ['setup:firefox'],
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'], storageState: '.auth/webkit.json' },
+      use: { ...devices['Desktop Safari'] },
       dependencies: ['setup:webkit'],
     },
   ],

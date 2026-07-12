@@ -64,11 +64,12 @@ Credentials are read from a `.env` file at the project root (gitignored). Copy t
 cp .env.example .env
 ```
 
-| Variable                    | Description                   |
-| --------------------------- | ----------------------------- |
-| `SAUCEDEMO_USERNAME`        | Standard test user login      |
-| `SAUCEDEMO_PASSWORD`        | Shared password for all users |
-| `SAUCEDEMO_LOCKED_USERNAME` | Locked-out user login         |
+| Variable                     | Description                   |
+| ---------------------------- | ----------------------------- |
+| `SAUCEDEMO_USERNAME`         | Standard test user login      |
+| `SAUCEDEMO_PASSWORD`         | Shared password for all users |
+| `SAUCEDEMO_LOCKED_USERNAME`  | Locked-out user login         |
+| `SAUCEDEMO_PROBLEM_USERNAME` | Problem user login            |
 
 In CI these are passed as [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
@@ -132,9 +133,19 @@ test('example', async ({ loginPage }) => {
 
 All test files import `{ test, expect }` from `@/fixtures`, not directly from `@playwright/test`.
 
-### storageState authentication
+### Multi-role storageState authentication
 
-`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in as `standard_user`, waits for the inventory page, and saves cookies and storage to `.auth/<browser>.json`. Each test project depends on its matching setup project and loads the saved state automatically — no test needs to go through the login form.
+`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in once per **role** (`standard`, `problem`) and saves cookies and storage to `.auth/<browser>-<role>.json`. Each test project depends on its matching setup project, and the `role` fixture option in `fixtures/index.ts` resolves which state file a test loads — no test ever goes through the login form.
+
+Tests run as `standard` by default. Switching role is a one-liner at file or describe-block level:
+
+```ts
+test.describe('Problem user', () => {
+  test.use({ role: 'problem' });
+
+  test('sees broken product images', async ({ productsPage }) => { ... });
+});
+```
 
 Each browser project (chromium, firefox, webkit) has a dedicated setup dependency, so CI jobs remain isolated and each only needs its own browser installed.
 
@@ -167,6 +178,7 @@ playwright-web-automation-ts/
 │   ├── products.test.ts
 │   └── checkout.test.ts
 ├── utils/
+│   ├── auth.ts               # Auth roles and storage-state file paths
 │   └── helpers.ts            # Product slug constants (Products)
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
