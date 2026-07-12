@@ -10,10 +10,8 @@ test.beforeEach(async ({ page, loginPage }, testInfo) => {
 });
 
 // Every test in this file puts an item in the cart, so all get the reset/logout teardown
-test.afterEach(async ({ loginPage }) => {
-  await loginPage.clickOpenSidebarMenuButton();
-  await loginPage.clickResetAppStateButton();
-  await loginPage.clickLogoutButton();
+test.afterEach(async ({ appMenu }) => {
+  await appMenu.resetAppStateAndLogout();
 });
 
 test(
