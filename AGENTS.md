@@ -51,6 +51,9 @@ npm run test:a11y
 # Run visual regression tests (baselines are Linux-only)
 npm run test:visual
 
+# Run performance checks
+npm run test:performance
+
 # Run with headed browser
 npm run test:headed
 
@@ -94,7 +97,7 @@ npm run format:check
 
 1. Create `tests/myFeature.test.ts`.
 2. Import `{ test, expect }` from `@/fixtures`.
-3. Tag every functional test `@regression`; critical-path journeys additionally get `@smoke`; non-functional suites carry their own tag (`@a11y`, `@visual`). Tags go through the `tag` test option — never in describe block names or test titles:
+3. Tag every functional test `@regression`; critical-path journeys additionally get `@smoke`; non-functional suites carry their own tag (`@a11y`, `@visual`, `@performance`). Tags go through the `tag` test option — never in describe block names or test titles:
 
    ```ts
    test('my test', { tag: ['@smoke', '@regression'] }, async ({ productsPage }) => { ... });
@@ -119,18 +122,19 @@ npm run format:check
 
 ## Conventions
 
-- **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`, `SAUCEDEMO_PROBLEM_USERNAME`). Never hardcode credentials.
+- **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`, `SAUCEDEMO_PROBLEM_USERNAME`, `SAUCEDEMO_PERFORMANCE_USERNAME`). Never hardcode credentials.
 - **Navigation:** navigate with relative paths against `baseURL` (`page.goto('/')`, `page.goto('/inventory.html')`) — `baseURL` comes from `config/env.ts` via `playwright.config.ts`.
 - **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary. Injected latency for traffic shaping lives inside `utils/network.ts` route handlers — never timers in test bodies.
 - **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
 - **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
 - **Accessibility:** a11y scans go through `utils/a11y.ts`; the known-violations baseline lives in `test-data/a11y.ts` with a comment per entry. Never use `disableRules()` to silence a finding.
 - **Visual baselines:** Linux-only, generated exclusively by the `update-snapshots.yml` workflow — never hand-edit PNGs or commit locally generated snapshots (darwin/win32 are gitignored). Re-baseline via the workflow and review baseline-diff commits image-by-image.
+- **Performance:** measurement helpers live in `utils/performance.ts`, thresholds in `test-data/performance.ts` with a rationale comment each. Use the cross-browser navigation-timing API, never `page.metrics()`. Absolute thresholds are generous sanity ceilings, never tight SLOs — shared CI runners are noisy; prefer same-run relative comparisons for seeded-behaviour assertions.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
 - **Network interception:** interception helpers live in `utils/network.ts` and route patterns in `test-data/routes.ts`. Register routes before `page.goto()`. Never put `expect()` inside a route handler. No `unroute()` teardown needed — context isolation cleans up. saucedemo is fully client-side: never stub app APIs that don't exist (there are no auth or product endpoints).
-- **Authentication:** `tests/global.setup.ts` is a Playwright setup project that logs in once per browser + role pair (`standard`, `problem`) and saves cookies/storage to `.auth/<browser>-<role>.json`. Tests load the `standard` state by default via the `role` fixture option in `fixtures/index.ts`; switch role with `test.use({ role: 'problem' })` at file or describe level. Roles are defined in `utils/auth.ts`; adding a role also means wiring its username env var through `config/env.ts`, `.env.example`, and the CI workflow `env` block — never log in inside a test. Never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
+- **Authentication:** `tests/global.setup.ts` is a Playwright setup project that logs in once per browser + role pair (`standard`, `problem`, `glitch`) and saves cookies/storage to `.auth/<browser>-<role>.json`. Tests load the `standard` state by default via the `role` fixture option in `fixtures/index.ts`; switch role with `test.use({ role: 'problem' })` at file or describe level. A single test that must compare roles (e.g. performance deltas) creates symmetric fresh contexts from the saved auth files via a `utils/` helper. Roles are defined in `utils/auth.ts`; adding a role also means wiring its username env var through `config/env.ts`, `.env.example`, and the CI workflow `env` block — never log in inside a test. Never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
 
 ---
 

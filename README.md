@@ -64,12 +64,13 @@ Credentials are read from a `.env` file at the project root (gitignored). Copy t
 cp .env.example .env
 ```
 
-| Variable                     | Description                   |
-| ---------------------------- | ----------------------------- |
-| `SAUCEDEMO_USERNAME`         | Standard test user login      |
-| `SAUCEDEMO_PASSWORD`         | Shared password for all users |
-| `SAUCEDEMO_LOCKED_USERNAME`  | Locked-out user login         |
-| `SAUCEDEMO_PROBLEM_USERNAME` | Problem user login            |
+| Variable                         | Description                   |
+| -------------------------------- | ----------------------------- |
+| `SAUCEDEMO_USERNAME`             | Standard test user login      |
+| `SAUCEDEMO_PASSWORD`             | Shared password for all users |
+| `SAUCEDEMO_LOCKED_USERNAME`      | Locked-out user login         |
+| `SAUCEDEMO_PROBLEM_USERNAME`     | Problem user login            |
+| `SAUCEDEMO_PERFORMANCE_USERNAME` | Performance glitch user login |
 
 In CI these are passed as [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
@@ -93,6 +94,7 @@ npm run test:smoke
 npm run test:regression
 npm run test:a11y
 npm run test:visual
+npm run test:performance
 ```
 
 ## Code quality
@@ -141,7 +143,7 @@ All test files import `{ test, expect }` from `@/fixtures`, not directly from `@
 
 ### Multi-role storageState authentication
 
-`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in once per **role** (`standard`, `problem`) and saves cookies and storage to `.auth/<browser>-<role>.json`. Each test project depends on its matching setup project, and the `role` fixture option in `fixtures/index.ts` resolves which state file a test loads — no test ever goes through the login form.
+`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in once per **role** (`standard`, `problem`, `glitch`) and saves cookies and storage to `.auth/<browser>-<role>.json`. Each test project depends on its matching setup project, and the `role` fixture option in `fixtures/index.ts` resolves which state file a test loads — no test ever goes through the login form.
 
 Tests run as `standard` by default. Switching role is a one-liner at file or describe-block level:
 
@@ -165,12 +167,13 @@ test.use({ storageState: { cookies: [], origins: [] } });
 
 ### Test tags
 
-| Tag           | Scope                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------- |
-| `@smoke`      | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change. |
-| `@regression` | The full functional suite. Every functional test carries it.                             |
-| `@a11y`       | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.     |
-| `@visual`     | Full-page screenshot comparisons against CI-generated Linux baselines. Non-functional.   |
+| Tag            | Scope                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| `@smoke`       | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change.       |
+| `@regression`  | The full functional suite. Every functional test carries it.                                   |
+| `@a11y`        | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.           |
+| `@visual`      | Full-page screenshot comparisons against CI-generated Linux baselines. Non-functional.         |
+| `@performance` | Cross-browser navigation-timing checks (sanity ceiling + seeded-glitch delta). Non-functional. |
 
 Tags are applied through the test's `{ tag: [...] }` option — never encoded in describe-block names or titles:
 
@@ -178,23 +181,24 @@ Tags are applied through the test's `{ tag: [...] }` option — never encoded in
 test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => { ... });
 ```
 
-Future suites from the [roadmap](ROADMAP.md) (`@performance`) will follow the same scheme.
-
 ```bash
 # Critical-path journeys only
-npm run test:smoke        # playwright test --grep @smoke
+npm run test:smoke          # playwright test --grep @smoke
 
 # Full functional suite
-npm run test:regression   # playwright test --grep @regression
+npm run test:regression     # playwright test --grep @regression
 
 # Accessibility scans
-npm run test:a11y         # playwright test --grep @a11y
+npm run test:a11y           # playwright test --grep @a11y
 
 # Visual regression
-npm run test:visual       # playwright test --grep @visual
+npm run test:visual         # playwright test --grep @visual
+
+# Performance checks
+npm run test:performance    # playwright test --grep @performance
 ```
 
-> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y` and `@visual` have landed; `@performance` follows.
+> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y`, `@visual`, and `@performance`.
 
 ### Test design principles
 
@@ -233,6 +237,19 @@ npm run test:visual          # compare against committed baselines
 npm run test:visual:update   # regenerate baselines (CI/Linux only)
 ```
 
+### Performance
+
+Navigation timing (`@performance`) is read through the standard cross-browser Web Performance API (`performance.getEntriesByType('navigation')`) — never `page.metrics()`, which is Chromium-only. Two tests:
+
+- **Sanity ceiling** — the inventory page's DOM-content-loaded time stays under a generous bound for `standard_user`. A smoke alarm for pathological regressions, not an SLO: shared CI runners are too noisy for tight absolute thresholds.
+- **Seeded-glitch delta** — `performance_glitch_user` triggers a deliberate ~5s render busy-wait in the app; the test measures both roles in symmetric fresh contexts in the same run and asserts the glitch load measurably exceeds the standard one. The relative comparison is immune to runner speed.
+
+Measured values attach to the HTML report as annotations on every run. Thresholds live in `test-data/performance.ts` with a rationale comment each.
+
+```bash
+npm run test:performance   # playwright test --grep @performance
+```
+
 ## Project structure
 
 ```text
@@ -251,7 +268,8 @@ playwright-web-automation-ts/
 │   ├── users.ts              # All 6 SauceDemo user types
 │   ├── checkout.ts           # Valid and invalid checkout form scenarios
 │   ├── a11y.ts               # Known accessibility violations baseline
-│   └── routes.ts             # Route patterns and traffic-shaping constants
+│   ├── routes.ts             # Route patterns and traffic-shaping constants
+│   └── performance.ts        # Timing thresholds with rationale comments
 ├── tests/                    # Test specs
 │   ├── global.setup.ts       # storageState authentication setup
 │   ├── login.test.ts
@@ -260,12 +278,14 @@ playwright-web-automation-ts/
 │   ├── accessibility.test.ts # WCAG scans of the journey pages
 │   ├── network.test.ts       # Network interception and resilience tests
 │   ├── visual.test.ts        # Full-page screenshot comparisons
-│   └── visual.test.ts-snapshots/ # CI-generated Linux baselines
+│   ├── visual.test.ts-snapshots/ # CI-generated Linux baselines
+│   └── performance.test.ts   # Navigation-timing checks
 ├── utils/
 │   ├── a11y.ts               # axe-core scan helper with baseline filtering
 │   ├── auth.ts               # Auth roles and storage-state file paths
 │   ├── helpers.ts            # Product slug constants (Products)
-│   └── network.ts            # Route-interception helpers with intercept counters
+│   ├── network.ts            # Route-interception helpers with intercept counters
+│   └── performance.ts        # Navigation-timing measurement helpers
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
 ├── ROADMAP.md                # 20-PR improvement roadmap
