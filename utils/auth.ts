@@ -11,6 +11,7 @@ import config from '@/config/env';
 export const roleUsernames = {
   standard: config.username,
   problem: config.problem_username,
+  glitch: config.performance_username,
 } as const;
 
 export type AuthRole = keyof typeof roleUsernames;
