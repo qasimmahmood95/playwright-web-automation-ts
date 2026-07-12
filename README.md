@@ -152,9 +152,13 @@ This is a **local convenience, not a change to CI** — the pipeline still runs 
 
 Each page of the application has a dedicated class in `pages/` that encapsulates all locators and interactions for that page. Test files never use raw `page.locator()` calls — all selector logic lives in the page objects.
 
+### Shared components
+
+Cross-page chrome — the Swag Labs logo, the header cart icon + item badge and burger menu button, and the sidebar's reset-app-state and logout actions — lives in `components/` instead of being duplicated across page objects. `HeaderComponent` owns the always-visible top bar; `NavigationComponent` owns the sidebar drawer the burger opens. Page objects compose the header (so a test reaches the cart or logo through the page object it already uses, e.g. `productsPage.checkShoppingCartHasItems()`), while the sidebar drawer is injected directly as the `appMenu` fixture and drives the reset-and-logout teardown. Anything tied to a single page stays in that page object; the split is simply shared-across-pages → `components/`, one-page-only → `pages/`.
+
 ### Fixtures
 
-`fixtures/index.ts` extends Playwright's base `test` with pre-instantiated page objects (`loginPage`, `productsPage`, `checkoutPage`). This eliminates boilerplate in every test file — page objects are injected by name rather than constructed with `new`.
+`fixtures/index.ts` extends Playwright's base `test` with pre-instantiated page objects (`loginPage`, `productsPage`, `checkoutPage`) and shared UI components (`appHeader`, `appMenu`). This eliminates boilerplate in every test file — page objects and components are injected by name rather than constructed with `new`.
 
 ```ts
 // Before fixtures
@@ -289,6 +293,9 @@ playwright-web-automation-ts/
 ├── .claude/                  # AI tooling context (full implementation plan)
 ├── .dockerignore             # Files excluded from the Docker build context (node_modules, .env, reports)
 ├── .github/workflows/        # CI/CD pipeline
+├── components/               # Shared cross-page UI composed by page objects / injected as fixtures
+│   ├── HeaderComponent.ts       # Swag Labs logo, cart icon + badge, burger menu button
+│   └── NavigationComponent.ts   # Sidebar reset-app-state + logout (the appMenu fixture)
 ├── config/
 │   └── env.ts                # Environment variable helpers
 ├── fixtures/

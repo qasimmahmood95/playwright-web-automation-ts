@@ -2,12 +2,16 @@ import { test as base } from '@playwright/test';
 import LoginPage from '@/pages/loginPage';
 import ProductsPage from '@/pages/productsPage';
 import CheckoutPage from '@/pages/checkoutPage';
+import HeaderComponent from '@/components/HeaderComponent';
+import NavigationComponent from '@/components/NavigationComponent';
 import { authFile, type AuthRole } from '@/utils/auth';
 
 type Fixtures = {
   loginPage: LoginPage;
   productsPage: ProductsPage;
   checkoutPage: CheckoutPage;
+  appHeader: HeaderComponent;
+  appMenu: NavigationComponent;
 };
 
 type AuthOptions = {
@@ -34,6 +38,12 @@ export const test = base.extend<Fixtures & AuthOptions>({
   },
   checkoutPage: async ({ page }, use) => {
     await use(new CheckoutPage(page));
+  },
+  appHeader: async ({ page }, use) => {
+    await use(new HeaderComponent(page));
+  },
+  appMenu: async ({ page, appHeader }, use) => {
+    await use(new NavigationComponent(page, appHeader));
   },
 });
 
