@@ -31,7 +31,7 @@ jobs:
             echo "Dispatch this workflow against a branch, not a tag." >&2
             exit 1
           fi
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # Required: the baseline commit step pushes with this credential
           persist-credentials: true
