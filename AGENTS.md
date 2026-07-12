@@ -161,12 +161,14 @@ npm run format:check
 
 ## CI
 
-GitHub Actions runs on push to `main` and on pull requests. The pipeline:
+GitHub Actions runs on push to `main`, on pull requests, and on a weekly schedule. The pipeline:
 
 1. Runs `typecheck`, `lint`, and `format:check` (gates the test job)
 2. Runs tests in parallel across Chromium, Firefox, and WebKit
 3. Uploads HTML reports as artifacts (30-day retention)
 4. On green `main` builds, merges the per-browser blob reports into one HTML report and deploys it to GitHub Pages (`publish-report` job — least-privilege `pages`/`id-token` scopes, main-push only)
+
+A `schedule:` trigger (Mon 06:00 UTC) re-runs the full matrix as a weekly canary — saucedemo.com is a third-party dependency that can drift between commits, so this keeps the badge honest while the repo is dormant. It's validation only: `publish-report` is push-to-main gated, so scheduled runs never republish. A `concurrency` block cancels superseded runs for the same PR only — non-PR events (push, schedule, `workflow_dispatch`) use a unique per-run group key (`github.run_id`), so they never share a slot and a push mid-deploy to Pages always finishes.
 
 `SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME`, `SAUCEDEMO_LOCKED_USERNAME`, and `SAUCEDEMO_PROBLEM_USERNAME` are Actions variables (non-sensitive, public demo site values).
 

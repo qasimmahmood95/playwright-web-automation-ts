@@ -6,6 +6,22 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  # Weekly canary against the live demo site (Mon 06:00 UTC). saucedemo.com is a
+  # third-party dependency, so it can drift (markup/behaviour changes) between
+  # our commits; this run catches that — and any dependency rot — while the repo
+  # is dormant, keeping the status badge honest. Validation only: the
+  # publish-report job is push-to-main gated, so a scheduled run never republishes.
+  schedule:
+    - cron: '0 6 * * 1'
+
+# Cancel a superseded in-progress run only for the same PR (a new push to the PR
+# supersedes the old run). Non-PR events (push, schedule, workflow_dispatch) get
+# a unique per-run group key via github.run_id, so they never share a slot —
+# they can neither cancel nor be queued/displaced by each other, and a main
+# build mid-deploy to Pages always runs to completion.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 # Least privilege: the jobs only read the repo and upload artifacts (the
 # artifact API doesn't use the token's contents scope), so read-only is enough.
