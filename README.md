@@ -87,6 +87,11 @@ npm run test:ui
 
 # Open the HTML report from the last run
 npm run test:report
+
+# Tagged suites
+npm run test:smoke
+npm run test:regression
+npm run test:a11y
 ```
 
 ## Code quality
@@ -162,7 +167,8 @@ test.use({ storageState: { cookies: [], origins: [] } });
 | Tag           | Scope                                                                                    |
 | ------------- | ---------------------------------------------------------------------------------------- |
 | `@smoke`      | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change. |
-| `@regression` | The full functional suite. Every test carries it.                                        |
+| `@regression` | The full functional suite. Every functional test carries it.                             |
+| `@a11y`       | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.     |
 
 Tags are applied through the test's `{ tag: [...] }` option — never encoded in describe-block names or titles:
 
@@ -170,7 +176,7 @@ Tags are applied through the test's `{ tag: [...] }` option — never encoded in
 test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => { ... });
 ```
 
-Future suites from the [roadmap](ROADMAP.md) (`@a11y`, `@visual`, `@performance`) will follow the same scheme.
+Future suites from the [roadmap](ROADMAP.md) (`@visual`, `@performance`) will follow the same scheme.
 
 ```bash
 # Critical-path journeys only
@@ -178,9 +184,12 @@ npm run test:smoke        # playwright test --grep @smoke
 
 # Full functional suite
 npm run test:regression   # playwright test --grep @regression
+
+# Accessibility scans
+npm run test:a11y         # playwright test --grep @a11y
 ```
 
-> `test:regression` currently matches the entire suite by design — every functional test carries the tag. The split earns its keep as dedicated non-functional suites (`@a11y`, `@visual`, `@performance`) join.
+> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y` is the first, with `@visual` and `@performance` to follow.
 
 ### Test design principles
 
@@ -188,6 +197,12 @@ npm run test:regression   # playwright test --grep @regression
 - **Data-driven negative tests** — invalid inputs and their expected errors live as typed constants in `test-data/`; checkout form validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
 - **Scoped teardown** — reset-app-state/logout teardown runs only on tests that mutate state (cart, checkout), not on read-only assertions.
 - **Role-based auth** — tests never log in through the UI; stored auth is loaded via the `role` fixture (see [Multi-role storageState authentication](#multi-role-storagestate-authentication) above).
+
+### Accessibility
+
+Automated WCAG 2.0/2.1 A + AA scans run through [axe-core](https://github.com/dequelabs/axe-core) (`@axe-core/playwright`) against the four journey pages: login (signed out), inventory, cart (with an item), and checkout step one.
+
+SauceDemo ships real accessibility defects, so the suite asserts **no new violations** rather than zero: known rule failures are pinned per page in `test-data/a11y.ts`, each with a comment naming the defect. A scan fails only on violations outside that baseline, and baselined rules that stop firing are soft-flagged as report annotations so the baseline can shrink over time. Full axe results are attached to the HTML report for every scan.
 
 ## Project structure
 
@@ -205,13 +220,16 @@ playwright-web-automation-ts/
 │   └── checkoutPage.ts
 ├── test-data/                # Typed constants for test inputs
 │   ├── users.ts              # All 6 SauceDemo user types
-│   └── checkout.ts           # Valid and invalid checkout form scenarios
+│   ├── checkout.ts           # Valid and invalid checkout form scenarios
+│   └── a11y.ts               # Known accessibility violations baseline
 ├── tests/                    # Test specs
 │   ├── global.setup.ts       # storageState authentication setup
 │   ├── login.test.ts
 │   ├── products.test.ts
-│   └── checkout.test.ts
+│   ├── checkout.test.ts
+│   └── accessibility.test.ts # WCAG scans of the journey pages
 ├── utils/
+│   ├── a11y.ts               # axe-core scan helper with baseline filtering
 │   ├── auth.ts               # Auth roles and storage-state file paths
 │   └── helpers.ts            # Product slug constants (Products)
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)

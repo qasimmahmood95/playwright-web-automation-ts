@@ -58,6 +58,10 @@ export default class CheckoutPage {
     await expect(this.errorMessage).toContainText(expected);
   }
 
+  async checkInformationForm() {
+    await expect(this.firstNameTextField).toBeVisible();
+  }
+
   async checkCheckoutInfoPage() {
     await expect(this.paymentInfo).toBeVisible();
     await expect(this.shippingInfo).toBeVisible();
