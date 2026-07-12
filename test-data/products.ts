@@ -1,3 +1,4 @@
+/** Product slugs used to build dynamic `data-test` selectors (e.g. add-to-cart-<slug>). */
 export const Products = {
   backpack: 'sauce-labs-backpack',
   bikeLight: 'sauce-labs-bike-light',

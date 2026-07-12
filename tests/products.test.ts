@@ -1,5 +1,5 @@
 import { expect, test } from '@/fixtures';
-import { Products } from '@/utils/helpers';
+import { Products } from '@/test-data/products';
 
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);

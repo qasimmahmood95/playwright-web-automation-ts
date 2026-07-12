@@ -6,7 +6,7 @@ import {
   delayRequests,
   fulfillWithPlaceholderImage,
 } from '@/utils/network';
-import { Products } from '@/utils/helpers';
+import { Products } from '@/test-data/products';
 
 // Routes must be registered before navigation, so page.goto() lives in each
 // test body here rather than in a shared beforeEach like the other spec files.
