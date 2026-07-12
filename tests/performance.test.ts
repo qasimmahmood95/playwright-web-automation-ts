@@ -35,11 +35,15 @@ test(
 
     testInfo.annotations.push({
       type: 'performance',
-      description: `inventory DCL standard ${Math.round(standard.domContentLoadedMs)}ms vs glitch ${Math.round(glitch.domContentLoadedMs)}ms`,
+      description:
+        `inventory ready standard ${standard.readyMs}ms vs glitch ${glitch.readyMs}ms ` +
+        `(DCL ${Math.round(standard.domContentLoadedMs)}ms vs ${Math.round(glitch.domContentLoadedMs)}ms)`,
     });
-    // The glitch user's seeded render busy-wait must dominate runner noise
-    expect(glitch.domContentLoadedMs - standard.domContentLoadedMs).toBeGreaterThan(
-      PerformanceThresholds.glitchMinDclDeltaMs
+    // The glitch user's seeded render busy-wait must dominate runner noise.
+    // Asserted on time-to-rendered — the busy-wait's position relative to
+    // DOMContentLoaded is engine-dependent, but first render always waits
+    expect(glitch.readyMs - standard.readyMs).toBeGreaterThan(
+      PerformanceThresholds.glitchMinReadyDeltaMs
     );
   }
 );

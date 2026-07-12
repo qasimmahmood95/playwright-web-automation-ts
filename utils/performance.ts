@@ -1,6 +1,12 @@
 import type { Browser, Page } from '@playwright/test';
+import ProductsPage from '@/pages/productsPage';
 
 export type NavigationTiming = { domContentLoadedMs: number; loadMs: number };
+
+export type InventoryLoadMeasurement = NavigationTiming & {
+  /** Wall-clock from navigation start until the inventory title is rendered. */
+  readyMs: number;
+};
 
 /**
  * Reads the page's navigation-timing entry via the standard Web Performance
@@ -24,18 +30,29 @@ export async function getNavigationTiming(page: Page): Promise<NavigationTiming>
 
 /**
  * Loads the inventory page in a fresh context seeded from a saved auth state
- * and returns its navigation timing. Symmetric cold contexts keep cross-role
- * comparisons fair; the context is always closed — it holds no app state.
+ * and measures it. Symmetric cold contexts keep cross-role comparisons fair;
+ * the context is always closed — it holds no app state.
+ *
+ * Cross-role deltas must use `readyMs`, not DOM-content-loaded: the glitch
+ * user's seeded render busy-wait executes before DCL only on some engines
+ * (CI showed pre-DCL on Firefox, post-DCL on Chromium/WebKit), but the title
+ * cannot render until it completes, so wall-clock-to-rendered captures the
+ * delay everywhere.
  */
 export async function measureInventoryLoad(
   browser: Browser,
   storageStatePath: string
-): Promise<NavigationTiming> {
+): Promise<InventoryLoadMeasurement> {
   const context = await browser.newContext({ storageState: storageStatePath });
   try {
     const page = await context.newPage();
+    const start = Date.now();
     await page.goto('/inventory.html');
-    return await getNavigationTiming(page);
+    await new ProductsPage(page).checkTitle('Products');
+    const readyMs = Date.now() - start;
+
+    const timing = await getNavigationTiming(page);
+    return { ...timing, readyMs };
   } finally {
     await context.close();
   }

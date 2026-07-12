@@ -242,7 +242,7 @@ npm run test:visual:update   # regenerate baselines (CI/Linux only)
 Navigation timing (`@performance`) is read through the standard cross-browser Web Performance API (`performance.getEntriesByType('navigation')`) — never `page.metrics()`, which is Chromium-only. Two tests:
 
 - **Sanity ceiling** — the inventory page's DOM-content-loaded time stays under a generous bound for `standard_user`. A smoke alarm for pathological regressions, not an SLO: shared CI runners are too noisy for tight absolute thresholds.
-- **Seeded-glitch delta** — `performance_glitch_user` triggers a deliberate ~5s render busy-wait in the app; the test measures both roles in symmetric fresh contexts in the same run and asserts the glitch load measurably exceeds the standard one. The relative comparison is immune to runner speed.
+- **Seeded-glitch delta** — `performance_glitch_user` triggers a deliberate ~5s render busy-wait in the app; the test measures both roles in symmetric fresh contexts in the same run and asserts the glitch's wall-clock time-to-rendered measurably exceeds the standard one. The relative comparison is immune to runner speed, and time-to-rendered captures the delay on every engine (whether the busy-wait lands before or after DOMContentLoaded is engine-dependent).
 
 Measured values attach to the HTML report as annotations on every run. Thresholds live in `test-data/performance.ts` with a rationale comment each.
 

@@ -8,6 +8,8 @@ export const PerformanceThresholds = {
   // runner contention and video-recording overhead
   standardDclCeilingMs: 4000,
   // The app seeds a fixed 5000ms render busy-wait for performance_glitch_user,
-  // leaving ~2s of margin on each side of this delta
-  glitchMinDclDeltaMs: 3000,
+  // leaving ~2s of margin on each side of this delta. Compared on wall-clock
+  // time-to-rendered: whether the busy-wait lands before or after DCL is
+  // engine-dependent, but first render always waits for it
+  glitchMinReadyDeltaMs: 3000,
 } as const;
