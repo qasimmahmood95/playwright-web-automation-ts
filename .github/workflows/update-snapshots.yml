@@ -1,0 +1,77 @@
+name: Update visual snapshots
+
+# Dispatched manually against a branch that needs new visual baselines.
+# Baselines are Linux-only: this runner matches the platform of the test jobs.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write # push regenerated baselines back to the branch
+  actions: write # re-dispatch playwright.yml so the new head SHA gets a CI run
+
+concurrency:
+  group: update-snapshots-${{ github.ref }}
+  cancel-in-progress: false # never kill a run mid-push
+
+jobs:
+  update:
+    name: Regenerate baselines
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SAUCEDEMO_USERNAME: ${{ vars.SAUCEDEMO_USERNAME }}
+      SAUCEDEMO_PASSWORD: ${{ secrets.SAUCEDEMO_PASSWORD }}
+      SAUCEDEMO_LOCKED_USERNAME: ${{ vars.SAUCEDEMO_LOCKED_USERNAME }}
+      SAUCEDEMO_PROBLEM_USERNAME: ${{ vars.SAUCEDEMO_PROBLEM_USERNAME }}
+    steps:
+      - name: Ensure the dispatch target is a branch
+        run: |
+          if [[ "$GITHUB_REF_TYPE" != "branch" ]]; then
+            echo "Dispatch this workflow against a branch, not a tag." >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v6
+        with:
+          # Required: the baseline commit step pushes with this credential
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        # No matrix: one runner generates baselines for all browser projects in one pass
+        run: npx playwright install --with-deps
+      - name: Regenerate visual baselines
+        # Self-contained on purpose: this workflow ships before the test:visual:update
+        # npm script, and must work on any branch regardless of package.json state
+        run: npx playwright test --grep @visual --update-snapshots
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report-snapshot-update
+          path: playwright-report/
+          retention-days: 30
+      - name: Commit and push baselines
+        id: commit
+        run: |
+          git add -A -- ':(glob)tests/**/*.png'
+          if git diff --cached --quiet; then
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            echo "No baseline changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test: update visual regression baselines"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+      # A GITHUB_TOKEN push does not retrigger PR checks, but a token-created
+      # workflow_dispatch does — so the new head SHA still gets a full CI run
+      - name: Trigger CI on the updated branch
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run playwright.yml --ref "$GITHUB_REF_NAME"
