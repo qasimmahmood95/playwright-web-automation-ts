@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project conventions and contributor guide
+    url: https://github.com/qasimmahmood95/playwright-web-automation-ts/blob/main/AGENTS.md
+    about: Read AGENTS.md for the conventions before filing an issue.
