@@ -281,7 +281,7 @@ npm run test:performance    # playwright test --grep @performance
 ### Test design principles
 
 - **Focused tests**: each test verifies one behaviour. Long journeys are split into focused tests rather than chained into a single mega-test.
-- **Data-driven negative tests**: invalid inputs and their expected errors live as typed constants in `test-data/`; checkout form validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
+- **Data-driven negative tests**: checkout inputs are generated with [Faker](https://fakerjs.dev/) under a fixed seed (realistic but reproducible, so CI never flakes on random data); each invalid scenario reuses the valid data with one field blanked, and checkout validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
 - **Scoped teardown**: reset-app-state/logout teardown runs only on tests that mutate state (cart, checkout), not on read-only assertions.
 - **Role-based auth**: tests never log in through the UI; stored auth is loaded via the `role` fixture (see [Multi-role storageState authentication](#multi-role-storagestate-authentication) above).
 
