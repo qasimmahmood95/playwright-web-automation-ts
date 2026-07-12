@@ -7,6 +7,17 @@ Production-ready Playwright test suite for the [SauceDemo](https://www.saucedemo
 
 📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)** — the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
 
+## Highlights
+
+A production-grade E2E suite that goes well beyond click-through tests:
+
+- **Five tagged test dimensions** — functional (`@smoke` / `@regression`), accessibility (`@a11y`, axe-core WCAG scans), visual (`@visual`, cross-browser screenshots), and performance (`@performance`, navigation timing) — each runnable in isolation.
+- **Multi-role authentication via `storageState`** — a setup project logs in once per browser + role (`standard` / `problem` / `glitch`) and saves the session; tests switch role with a one-line fixture option and never touch the login form.
+- **CI-generated visual baselines** — screenshots are baselined on the CI Linux platform by a dedicated `workflow_dispatch` pipeline that commits them and re-triggers checks, so `@visual` is stable and never depends on a contributor's local OS.
+- **Architecture-aware, honest testing** — the network and performance suites are built around SauceDemo's actual fully client-side app (no fake API stubs); performance asserts the seeded `performance_glitch_user` delay through a same-run relative comparison, immune to CI noise.
+- **Runs anywhere, reports live** — a version-pinned Playwright Docker image reproduces the CI platform locally, and every green `main` build publishes a merged three-browser HTML report to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/).
+- **Clean framework design** — Page Object Model plus shared UI components, typed fixtures, path aliases, externalised test data, and first-class AI-agent docs ([`AGENTS.md`](AGENTS.md)).
+
 ## Tech stack
 
 <!-- markdownlint-disable MD033 -->
