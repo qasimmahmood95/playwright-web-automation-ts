@@ -1,13 +1,35 @@
 # playwright-web-automation-ts
 
-Production-ready Playwright test suite for the [SauceDemo](https://www.saucedemo.com/) e-commerce flow, built with TypeScript.
+Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com/), a demo e-commerce site. It exercises the full shopper journey — **login → browse inventory → add to cart → checkout** — across three browser engines and five test dimensions, built with TypeScript.
 
 [![Playwright Tests](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml/badge.svg)](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml)
 [![Live report](https://img.shields.io/badge/live%20report-Playwright-2EAD33?logo=playwright)](https://qasimmahmood95.github.io/playwright-web-automation-ts/)
+[![Node.js](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)](.nvmrc)
+[![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
 
 📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)** — the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
 
+## Contents
+
+- [Highlights](#highlights)
+- [Tech stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Environment variables](#environment-variables)
+- [Run commands](#run-commands)
+- [Code quality](#code-quality)
+- [Docker](#docker)
+- [Architecture](#architecture)
+- [Test strategy](#test-strategy)
+- [Project structure](#project-structure)
+- [Contributing](#contributing)
+- [CI/CD](#cicd)
+- [AI agent support](#ai-agent-support)
+- [License](#license)
+
 ## Highlights
+
+**26 tests across 7 spec files**, each executed on **3 browser engines** (Chromium · Firefox · WebKit) for 78 cross-browser runs, spanning **5 tagged dimensions** (`@smoke` · `@regression` · `@a11y` · `@visual` · `@performance`).
 
 A production-grade E2E suite that goes well beyond click-through tests:
 
@@ -55,6 +77,8 @@ A production-grade E2E suite that goes well beyond click-through tests:
 
 ## Setup
 
+The suite ships with the public demo-site logins as built-in defaults (in `config/env.ts`), so it runs clone-and-go — there are no secrets to request or fill in first:
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/qasimmahmood95/playwright-web-automation-ts.git
@@ -63,11 +87,17 @@ cd playwright-web-automation-ts
 # 2. Install dependencies
 npm ci
 
-# 3. Copy the environment variable template and fill in credentials
-cp .env.example .env
-
-# 4. Install browsers
+# 3. Install browsers
 npx playwright install --with-deps
+
+# 4. Run the suite
+npm test
+```
+
+To point the suite at different credentials, copy the template and edit it — otherwise this step is optional:
+
+```bash
+cp .env.example .env
 ```
 
 ## Environment variables
@@ -86,7 +116,7 @@ cp .env.example .env
 | `SAUCEDEMO_PROBLEM_USERNAME`     | Problem user login            |
 | `SAUCEDEMO_PERFORMANCE_USERNAME` | Performance glitch user login |
 
-In CI these are passed as [GitHub Actions secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+In CI, only `SAUCEDEMO_PASSWORD` is a [GitHub Actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets); the four usernames are non-sensitive [Actions variables](https://docs.github.com/en/actions/learn-github-actions/variables) (`vars.*`), since they are public demo-site logins.
 
 ## Run commands
 
@@ -361,7 +391,7 @@ Every push and pull request to `main` runs:
 2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
 3. **Publish report** — on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
 
-Credentials are injected from GitHub Actions secrets. Per-run per-browser HTML reports are also available under **Actions → run → Artifacts**.
+The password is injected from a GitHub Actions secret and the usernames from Actions variables (see [Environment variables](#environment-variables)). Per-run per-browser HTML reports are also available under **Actions → run → Artifacts**.
 
 ## AI agent support
 
@@ -370,3 +400,7 @@ This repo includes first-class support for AI coding assistants:
 - [`AGENTS.md`](AGENTS.md) — the single source of truth for project conventions, run commands, selector strategy, and best practices. Readable by any AI assistant (Cursor, Copilot, Claude, etc.)
 - [`CLAUDE.md`](CLAUDE.md) — a Claude Code-specific pointer to `AGENTS.md`
 - [`.claude/PLAN.md`](.claude/PLAN.md) — full 20-PR implementation roadmap with per-PR file lists and rationale
+
+## License
+
+Released under the [ISC License](LICENSE) — © 2026 Qasim Mahmood.
