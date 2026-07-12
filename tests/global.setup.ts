@@ -1,18 +1,18 @@
 import { test as setup } from '@playwright/test';
-import * as fs from 'fs';
+import LoginPage from '@/pages/loginPage';
 import config from '@/config/env';
+import { authFile, authRoles, roleUsernames } from '@/utils/auth';
 
-setup('authenticate as standard user', async ({ page }, testInfo) => {
-  const browser = testInfo.project.name.replace('setup:', '');
-  const authFile = `.auth/${browser}.json`;
+// Keyed on the browserName fixture so the file name always matches what the
+// storageState fixture in fixtures/index.ts resolves at test time.
+for (const role of authRoles) {
+  setup(`authenticate as ${role} user`, async ({ page, browserName }) => {
+    const loginPage = new LoginPage(page);
 
-  fs.mkdirSync('.auth', { recursive: true });
+    await page.goto('/');
+    await loginPage.login(roleUsernames[role], config.password);
+    await page.waitForURL('**/inventory.html');
 
-  await page.goto('/');
-  await page.getByTestId('username').fill(config.username);
-  await page.getByTestId('password').fill(config.password);
-  await page.getByTestId('login-button').click();
-  await page.waitForURL('**/inventory.html');
-
-  await page.context().storageState({ path: authFile });
-});
+    await page.context().storageState({ path: authFile(browserName, role) });
+  });
+}

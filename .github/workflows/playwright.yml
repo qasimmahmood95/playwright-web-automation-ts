@@ -39,6 +39,7 @@ jobs:
       SAUCEDEMO_USERNAME: ${{ vars.SAUCEDEMO_USERNAME }}
       SAUCEDEMO_PASSWORD: ${{ secrets.SAUCEDEMO_PASSWORD }}
       SAUCEDEMO_LOCKED_USERNAME: ${{ vars.SAUCEDEMO_LOCKED_USERNAME }}
+      SAUCEDEMO_PROBLEM_USERNAME: ${{ vars.SAUCEDEMO_PROBLEM_USERNAME }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

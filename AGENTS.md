@@ -107,14 +107,14 @@ npm run format:check
 
 ## Conventions
 
-- **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`). Never hardcode credentials.
+- **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`, `SAUCEDEMO_PROBLEM_USERNAME`). Never hardcode credentials.
 - **Navigation:** use `page.goto('/')` — `baseURL` is set in `playwright.config.ts`.
 - **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
 - **Network interception:** use `page.route()` for stubbing/intercepting requests in tests.
-- **Authentication:** `tests/global.setup.ts` is a Playwright setup project that logs in once per browser and saves cookies/storage to `.auth/<browser>.json`. Each test project depends on its setup project — never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
+- **Authentication:** `tests/global.setup.ts` is a Playwright setup project that logs in once per browser + role pair (`standard`, `problem`) and saves cookies/storage to `.auth/<browser>-<role>.json`. Tests load the `standard` state by default via the `role` fixture option in `fixtures/index.ts`; switch role with `test.use({ role: 'problem' })` at file or describe level. Roles are defined in `utils/auth.ts`; adding a role also means wiring its username env var through `config/env.ts`, `.env.example`, and the CI workflow `env` block — never log in inside a test. Never add `loginPage.login()` to products or checkout tests. Tests that exercise the login form must override with `test.use({ storageState: { cookies: [], origins: [] } })`.
 
 ---
 
@@ -138,7 +138,7 @@ GitHub Actions runs on push to `main` and on pull requests. The pipeline:
 2. Runs tests in parallel across Chromium, Firefox, and WebKit
 3. Uploads HTML reports as artifacts (30-day retention)
 
-`SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME` and `SAUCEDEMO_LOCKED_USERNAME` are Actions variables (non-sensitive, public demo site values).
+`SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME`, `SAUCEDEMO_LOCKED_USERNAME`, and `SAUCEDEMO_PROBLEM_USERNAME` are Actions variables (non-sensitive, public demo site values).
 
 ---
 
