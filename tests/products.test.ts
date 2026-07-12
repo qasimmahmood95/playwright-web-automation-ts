@@ -16,28 +16,52 @@ test.describe('Cart', () => {
     await loginPage.clickLogoutButton();
   });
 
-  test('Standard user can add items to the basket and remove them', async ({ productsPage }) => {
-    await productsPage.clickBikeLightTitle();
-    await productsPage.clickAddToCartButton();
-    await productsPage.checkShoppingCartHasItems(1);
-    await productsPage.clickRemoveButton();
-    await productsPage.checkShoppingCartHasItems(0);
-    await productsPage.clickBackToProductsButton();
+  test(
+    'Standard user can add and remove an item from the product detail page',
+    { tag: ['@smoke', '@regression'] },
+    async ({ productsPage }) => {
+      await productsPage.clickBikeLightTitle();
+      await productsPage.clickAddToCartButton();
+      await productsPage.checkShoppingCartHasItems(1);
+      await productsPage.clickRemoveButton();
+      await productsPage.checkShoppingCartHasItems(0);
+      await productsPage.clickBackToProductsButton();
 
-    await productsPage.clickAddToCart(Products.onesie);
-    await productsPage.checkRemoveButton(Products.onesie);
-    await productsPage.checkShoppingCartHasItems(1);
-    await productsPage.clickAddToCart(Products.bikeLight);
-    await productsPage.checkRemoveButton(Products.bikeLight);
+      // The detail-page removal must be reflected in the list state
+      await productsPage.checkAddToCartButton(Products.bikeLight);
+    }
+  );
 
-    await productsPage.clickShoppingCartButton();
-    await productsPage.checkTitle('Your Cart');
+  test(
+    'Standard user can add items to the basket from the product list',
+    { tag: '@regression' },
+    async ({ productsPage }) => {
+      await productsPage.clickAddToCart(Products.onesie);
+      await productsPage.checkRemoveButton(Products.onesie);
+      await productsPage.checkShoppingCartHasItems(1);
+      await productsPage.clickAddToCart(Products.bikeLight);
+      await productsPage.checkRemoveButton(Products.bikeLight);
+      await productsPage.checkShoppingCartHasItems(2);
+    }
+  );
 
-    await productsPage.clickRemove(Products.onesie);
-    await productsPage.checkShoppingCartHasItems(1);
-    await productsPage.clickRemove(Products.bikeLight);
-    await productsPage.checkShoppingCartHasItems(0);
-  });
+  test(
+    'Standard user can remove items from the cart',
+    { tag: '@regression' },
+    async ({ productsPage }) => {
+      await productsPage.clickAddToCart(Products.onesie);
+      await productsPage.clickAddToCart(Products.bikeLight);
+      await productsPage.checkShoppingCartHasItems(2);
+
+      await productsPage.clickShoppingCartButton();
+      await productsPage.checkTitle('Your Cart');
+
+      await productsPage.clickRemove(Products.onesie);
+      await productsPage.checkShoppingCartHasItems(1);
+      await productsPage.clickRemove(Products.bikeLight);
+      await productsPage.checkShoppingCartHasItems(0);
+    }
+  );
 });
 
 test(

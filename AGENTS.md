@@ -20,7 +20,7 @@ playwright-web-automation-ts/
 ├── fixtures/           # Playwright fixture extensions (page object injection)
 ├── pages/              # Page Object Model classes
 ├── test-data/          # Typed constants for users, checkout data, product slugs
-├── tests/              # Test files (.spec.ts)
+├── tests/              # Test files (.test.ts)
 ├── utils/              # Shared helpers and utilities
 ├── AGENTS.md           # This file
 ├── CLAUDE.md           # Pointer to this file
@@ -38,6 +38,12 @@ npm ci
 
 # Run all tests (headless)
 npm test
+
+# Run only smoke-tagged critical-path tests
+npm run test:smoke
+
+# Run the full tagged regression suite
+npm run test:regression
 
 # Run with headed browser
 npm run test:headed
@@ -80,12 +86,12 @@ npm run format:check
 
 ## How to add a new test
 
-1. Create `tests/myFeature.spec.ts`.
+1. Create `tests/myFeature.test.ts`.
 2. Import `{ test, expect }` from `@/fixtures`.
-3. Tag tests with `@smoke` or `@regression` via the `tag` test option:
+3. Tag every test `@regression`; critical-path journeys additionally get `@smoke`. Tags go through the `tag` test option — never in describe block names or test titles:
 
    ```ts
-   test('my test', { tag: '@smoke' }, async ({ productsPage }) => { ... });
+   test('my test', { tag: ['@smoke', '@regression'] }, async ({ productsPage }) => { ... });
    ```
 
 4. Use the fixture-injected page objects — do not instantiate page objects manually with `new`.
@@ -110,6 +116,8 @@ npm run format:check
 - **Credentials:** use `.env` variables (`SAUCEDEMO_USERNAME`, `SAUCEDEMO_PASSWORD`, `SAUCEDEMO_LOCKED_USERNAME`, `SAUCEDEMO_PROBLEM_USERNAME`). Never hardcode credentials.
 - **Navigation:** use `page.goto('/')` — `baseURL` is set in `playwright.config.ts`.
 - **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary.
+- **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
+- **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.

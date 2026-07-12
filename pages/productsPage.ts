@@ -64,6 +64,10 @@ export default class ProductsPage {
     await expect(this.removeButtonFor(productId)).toBeVisible();
   }
 
+  async checkAddToCartButton(productId: ProductId) {
+    await expect(this.addToCartButtonFor(productId)).toBeVisible();
+  }
+
   async checkTitle(title: string) {
     await expect(this.title).toBeVisible();
     await expect(this.title).toContainText(title);
