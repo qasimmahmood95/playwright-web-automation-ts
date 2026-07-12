@@ -1,13 +1,13 @@
 # playwright-web-automation-ts
 
-Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com/), a demo e-commerce site. It exercises the full shopper journey — **login → browse inventory → add to cart → checkout** — across three browser engines and five test dimensions, built with TypeScript.
+Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com/), a demo e-commerce site. It exercises the full shopper journey (**login → browse inventory → add to cart → checkout**) across three browser engines and five test dimensions, built with TypeScript.
 
 [![Playwright Tests](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml/badge.svg)](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml)
 [![Live report](https://img.shields.io/badge/live%20report-Playwright-2EAD33?logo=playwright)](https://qasimmahmood95.github.io/playwright-web-automation-ts/)
 [![Node.js](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)](.nvmrc)
 [![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
 
-📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)** — the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
+📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)**: the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
 
 ## Contents
 
@@ -29,16 +29,16 @@ Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com
 
 ## Highlights
 
-**26 tests across 7 spec files**, each executed on **3 browser engines** (Chromium · Firefox · WebKit) for 78 cross-browser runs, spanning **5 tagged dimensions** (`@smoke` · `@regression` · `@a11y` · `@visual` · `@performance`).
+**26 tests across 7 spec files**, each executed on 3 browser engines (Chromium, Firefox, and WebKit) for 78 cross-browser runs, spanning 5 tagged dimensions (`@smoke`, `@regression`, `@a11y`, `@visual`, `@performance`).
 
-A production-grade E2E suite that goes well beyond click-through tests:
+The suite covers functional, accessibility, visual, and performance testing:
 
-- **Five tagged test dimensions** — functional (`@smoke` / `@regression`), accessibility (`@a11y`, axe-core WCAG scans), visual (`@visual`, cross-browser screenshots), and performance (`@performance`, navigation timing) — each runnable in isolation.
-- **Multi-role authentication via `storageState`** — a setup project logs in once per browser + role (`standard` / `problem` / `glitch`) and saves the session; tests switch role with a one-line fixture option and never touch the login form.
-- **CI-generated visual baselines** — screenshots are baselined on the CI Linux platform by a dedicated `workflow_dispatch` pipeline that commits them and re-triggers checks, so `@visual` is stable and never depends on a contributor's local OS.
-- **Architecture-aware, honest testing** — the network and performance suites are built around SauceDemo's actual fully client-side app (no fake API stubs); performance asserts the seeded `performance_glitch_user` delay through a same-run relative comparison, immune to CI noise.
-- **Runs anywhere, reports live** — a version-pinned Playwright Docker image reproduces the CI platform locally, and every green `main` build publishes a merged three-browser HTML report to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/).
-- **Clean framework design** — Page Object Model plus shared UI components, typed fixtures, path aliases, externalised test data, and first-class AI-agent docs ([`AGENTS.md`](AGENTS.md)).
+- **Five tagged test dimensions**: functional (`@smoke` / `@regression`), accessibility (`@a11y`, axe-core WCAG scans), visual (`@visual`, cross-browser screenshots), and performance (`@performance`, navigation timing), each runnable in isolation.
+- **Multi-role authentication via `storageState`**: a setup project logs in once per browser + role (`standard` / `problem` / `glitch`) and saves the session; tests switch role with a one-line fixture option and never touch the login form.
+- **CI-generated visual baselines**: screenshots are baselined on the CI Linux platform by a dedicated `workflow_dispatch` pipeline that commits them and re-triggers checks, so `@visual` is stable and never depends on a contributor's local OS.
+- **Architecture-aware, honest testing**: the network and performance suites are built around SauceDemo's actual fully client-side app (no fake API stubs); performance asserts the seeded `performance_glitch_user` delay through a same-run relative comparison, immune to CI noise.
+- **Runs anywhere, reports live**: a version-pinned Playwright Docker image reproduces the CI platform locally, and every green `main` build publishes a merged three-browser HTML report to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/).
+- **Clean framework design**: Page Object Model plus shared UI components, typed fixtures, path aliases, externalised test data, and AI-agent docs ([`AGENTS.md`](AGENTS.md)).
 
 ## Tech stack
 
@@ -77,7 +77,7 @@ A production-grade E2E suite that goes well beyond click-through tests:
 
 ## Setup
 
-The suite ships with the public demo-site logins as built-in defaults (in `config/env.ts`), so it runs clone-and-go — there are no secrets to request or fill in first:
+The suite ships with the public demo-site logins as built-in defaults (in `config/env.ts`), so it runs clone-and-go, with no secrets to request or fill in first:
 
 ```bash
 # 1. Clone the repository
@@ -94,7 +94,7 @@ npx playwright install --with-deps
 npm test
 ```
 
-To point the suite at different credentials, copy the template and edit it — otherwise this step is optional:
+To point the suite at different credentials, copy the template and edit it (otherwise this step is optional):
 
 ```bash
 cp .env.example .env
@@ -171,12 +171,12 @@ npm run test:docker
 
 | Concern     | Handling                                                                                                   |
 | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| Browsers    | Bundled in the base image — no `npx playwright install` step.                                              |
+| Browsers    | Bundled in the base image, so there is no `npx playwright install` step.                                   |
 | Credentials | Public demo defaults come from `config/env.ts`; override at runtime with `--env-file .env`, never a layer. |
-| Platform    | Linux, matching CI — the closest local environment to reproduce a CI-only failure.                         |
+| Platform    | Linux, matching CI, so it is the closest local environment to reproduce a CI-only failure.                 |
 | HTML report | Written inside the container; mount a volume to keep it on the host (see below).                           |
 
-To exercise non-default credentials, pass your local `.env` at runtime — the same file used for local runs, never copied into the image (`.dockerignore` excludes it):
+To exercise non-default credentials, pass your local `.env` at runtime. It is the same file used for local runs and is never copied into the image (`.dockerignore` excludes it):
 
 ```bash
 docker run --rm --env-file .env playwright-web-automation-ts
@@ -188,21 +188,21 @@ The HTML report is written inside the container and discarded when it exits. To 
 docker run --rm -v "$(pwd)/playwright-report:/app/playwright-report" playwright-web-automation-ts
 ```
 
-This is a **local convenience, not a change to CI** — the pipeline still runs on `ubuntu-latest` with npx-installed browsers. The `@visual` suite compares against the CI-generated `-linux` baselines; whether they match inside the container depends on the image rendering identically to the runner (same platform, but not guaranteed byte-identical). Treat any Docker-only `@visual` diffs as environment noise, and never commit baselines the container produces — the canonical Linux baselines are generated exclusively by the `update-snapshots.yml` workflow (see [Visual regression](#visual-regression)), and the container's snapshots carry the same `-linux` suffix, so `.gitignore` (which only excludes `-darwin`/`-win32`) will not stop an accidental commit. Keep the Dockerfile's base-image tag in lockstep with the `@playwright/test` version — a version skew changes the browser builds.
+This is a **local convenience, not a change to CI**: the pipeline still runs on `ubuntu-latest` with npx-installed browsers. The `@visual` suite compares against the CI-generated `-linux` baselines; whether they match inside the container depends on the image rendering identically to the runner (same platform, but not guaranteed byte-identical). Treat any Docker-only `@visual` diffs as environment noise, and never commit baselines the container produces. The canonical Linux baselines are generated exclusively by the `update-snapshots.yml` workflow (see [Visual regression](#visual-regression)), and the container's snapshots carry the same `-linux` suffix, so `.gitignore` (which only excludes `-darwin`/`-win32`) will not stop an accidental commit. Keep the Dockerfile's base-image tag in lockstep with the `@playwright/test` version, since a version skew changes the browser builds.
 
 ## Architecture
 
 ### Page Object Model
 
-Each page of the application has a dedicated class in `pages/` that encapsulates all locators and interactions for that page. Test files never use raw `page.locator()` calls — all selector logic lives in the page objects.
+Each page of the application has a dedicated class in `pages/` that encapsulates all locators and interactions for that page. Test files never use raw `page.locator()` calls; all selector logic lives in the page objects.
 
 ### Shared components
 
-Cross-page chrome — the Swag Labs logo, the header cart icon + item badge and burger menu button, and the sidebar's reset-app-state and logout actions — lives in `components/` instead of being duplicated across page objects. `HeaderComponent` owns the always-visible top bar; `NavigationComponent` owns the sidebar drawer the burger opens. Page objects compose the header (so a test reaches the cart or logo through the page object it already uses, e.g. `productsPage.checkShoppingCartHasItems()`), while the sidebar drawer is injected directly as the `appMenu` fixture and drives the reset-and-logout teardown. Anything tied to a single page stays in that page object; the split is simply shared-across-pages → `components/`, one-page-only → `pages/`.
+Cross-page chrome (the Swag Labs logo, the header cart icon + item badge and burger menu button, and the sidebar's reset-app-state and logout actions) lives in `components/` instead of being duplicated across page objects. `HeaderComponent` owns the always-visible top bar; `NavigationComponent` owns the sidebar drawer the burger opens. Page objects compose the header (so a test reaches the cart or logo through the page object it already uses, e.g. `productsPage.checkShoppingCartHasItems()`), while the sidebar drawer is injected directly as the `appMenu` fixture and drives the reset-and-logout teardown. Anything tied to a single page stays in that page object; the split is simply shared-across-pages → `components/`, one-page-only → `pages/`.
 
 ### Fixtures
 
-`fixtures/index.ts` extends Playwright's base `test` with pre-instantiated page objects (`loginPage`, `productsPage`, `checkoutPage`) and shared UI components (`appHeader`, `appMenu`). This eliminates boilerplate in every test file — page objects and components are injected by name rather than constructed with `new`.
+`fixtures/index.ts` extends Playwright's base `test` with pre-instantiated page objects (`loginPage`, `productsPage`, `checkoutPage`) and shared UI components (`appHeader`, `appMenu`). This eliminates boilerplate in every test file: page objects and components are injected by name rather than constructed with `new`.
 
 ```ts
 // Before fixtures
@@ -221,7 +221,7 @@ All test files import `{ test, expect }` from `@/fixtures`, not directly from `@
 
 ### Multi-role storageState authentication
 
-`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in once per **role** (`standard`, `problem`, `glitch`) and saves cookies and storage to `.auth/<browser>-<role>.json`. Each test project depends on its matching setup project, and the `role` fixture option in `fixtures/index.ts` resolves which state file a test loads — no test ever goes through the login form.
+`tests/global.setup.ts` is a Playwright setup project that runs once before each browser's test suite. It logs in once per **role** (`standard`, `problem`, `glitch`) and saves cookies and storage to `.auth/<browser>-<role>.json`. Each test project depends on its matching setup project, and the `role` fixture option in `fixtures/index.ts` resolves which state file a test loads, so no test ever goes through the login form.
 
 Tests run as `standard` by default. Switching role is a one-liner at file or describe-block level:
 
@@ -247,13 +247,13 @@ test.use({ storageState: { cookies: [], origins: [] } });
 
 | Tag            | Scope                                                                                          |
 | -------------- | ---------------------------------------------------------------------------------------------- |
-| `@smoke`       | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change.       |
+| `@smoke`       | Critical-path user journeys: login, add to cart, checkout. Fast signal on every change.        |
 | `@regression`  | The full functional suite. Every functional test carries it.                                   |
 | `@a11y`        | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.           |
 | `@visual`      | Full-page screenshot comparisons against CI-generated Linux baselines. Non-functional.         |
 | `@performance` | Cross-browser navigation-timing checks (sanity ceiling + seeded-glitch delta). Non-functional. |
 
-Tags are applied through the test's `{ tag: [...] }` option — never encoded in describe-block names or titles:
+Tags are applied through the test's `{ tag: [...] }` option, never encoded in describe-block names or titles:
 
 ```ts
 test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => { ... });
@@ -276,14 +276,14 @@ npm run test:visual         # playwright test --grep @visual
 npm run test:performance    # playwright test --grep @performance
 ```
 
-> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y`, `@visual`, and `@performance`.
+> `test:regression` matches the full functional suite by design: every functional test carries the tag. Non-functional suites carry their own tags: `@a11y`, `@visual`, and `@performance`.
 
 ### Test design principles
 
-- **Focused tests** — each test verifies one behaviour. Long journeys are split into focused tests rather than chained into a single mega-test.
-- **Data-driven negative tests** — invalid inputs and their expected errors live as typed constants in `test-data/`; checkout form validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
-- **Scoped teardown** — reset-app-state/logout teardown runs only on tests that mutate state (cart, checkout), not on read-only assertions.
-- **Role-based auth** — tests never log in through the UI; stored auth is loaded via the `role` fixture (see [Multi-role storageState authentication](#multi-role-storagestate-authentication) above).
+- **Focused tests**: each test verifies one behaviour. Long journeys are split into focused tests rather than chained into a single mega-test.
+- **Data-driven negative tests**: invalid inputs and their expected errors live as typed constants in `test-data/`; checkout form validation iterates `InvalidCheckoutScenarios` instead of duplicating test bodies.
+- **Scoped teardown**: reset-app-state/logout teardown runs only on tests that mutate state (cart, checkout), not on read-only assertions.
+- **Role-based auth**: tests never log in through the UI; stored auth is loaded via the `role` fixture (see [Multi-role storageState authentication](#multi-role-storagestate-authentication) above).
 
 ### Accessibility
 
@@ -293,12 +293,12 @@ SauceDemo ships real accessibility defects, so the suite asserts **no new violat
 
 ### Network resilience
 
-SauceDemo is a fully client-side React app — login and inventory ship inside the JS bundle, with no auth or product APIs — so network tests target the traffic that actually exists: static bundles, product images, and third-party requests. Four `@regression` tests use `page.route()` interception:
+SauceDemo is a fully client-side React app (login and inventory ship inside the JS bundle, with no auth or product APIs), so network tests target the traffic that actually exists: static bundles, product images, and third-party requests. Four `@regression` tests use `page.route()` interception:
 
-- Product images **aborted** — the page must stay fully functional with broken images
-- Product images **stubbed** with a deterministic placeholder — a reusable binary-response stubbing pattern
-- All **cross-origin traffic blocked** — the app must never depend on third-party availability
-- **Injected latency** on product images — the page must still reach a usable state
+- Product images **aborted**: the page must stay fully functional with broken images
+- Product images **stubbed** with a deterministic placeholder: a reusable binary-response stubbing pattern
+- All **cross-origin traffic blocked**: the app must never depend on third-party availability
+- **Injected latency** on product images: the page must still reach a usable state
 
 Interception helpers live in `utils/network.ts`; route patterns and latency constants are typed test data in `test-data/routes.ts`. Every interception test asserts its intercept counter fired, so route-pattern drift fails loudly instead of silently passing.
 
@@ -306,7 +306,7 @@ Interception helpers live in `utils/network.ts`; route patterns and latency cons
 
 Full-page screenshot tests (`@visual`) cover five states: login, inventory as `standard_user`, inventory as `problem_user` (capturing its known same-image-everywhere defect), cart with an item, and checkout step one.
 
-Baselines are **Linux-only and generated exclusively in CI**: the manually dispatched **Update visual snapshots** workflow runs `--update-snapshots` on the target branch, commits the PNGs as `github-actions[bot]`, and re-dispatches the test workflow so the new head SHA still gets a full CI run (a plain `GITHUB_TOKEN` push doesn't retrigger PR checks, but a token-created `workflow_dispatch` does). Locally generated macOS/Windows baselines are gitignored — don't run `@visual` locally unless you're on Linux with matching browser builds.
+Baselines are **Linux-only and generated exclusively in CI**: the manually dispatched **Update visual snapshots** workflow runs `--update-snapshots` on the target branch, commits the PNGs as `github-actions[bot]`, and re-dispatches the test workflow so the new head SHA still gets a full CI run (a plain `GITHUB_TOKEN` push doesn't retrigger PR checks, but a token-created `workflow_dispatch` does). Locally generated macOS/Windows baselines are gitignored; don't run `@visual` locally unless you're on Linux with matching browser builds.
 
 When a dependency bump or a site deploy legitimately changes rendering, the visual jobs go red until someone dispatches the update workflow on that branch and reviews the baseline diff image-by-image. That is the intended re-baseline loop, not a flake.
 
@@ -315,14 +315,14 @@ npm run test:visual          # compare against committed baselines
 npm run test:visual:update   # regenerate baselines (CI/Linux only)
 ```
 
-To run `@visual` locally on a non-Linux machine, use the [Docker image](#docker) — it renders on the same Ubuntu/Playwright platform as CI. Do not commit baselines it produces; re-baselining stays with the update workflow.
+To run `@visual` locally on a non-Linux machine, use the [Docker image](#docker); it renders on the same Ubuntu/Playwright platform as CI. Do not commit baselines it produces; re-baselining stays with the update workflow.
 
 ### Performance
 
-Navigation timing (`@performance`) is read through the standard cross-browser Web Performance API (`performance.getEntriesByType('navigation')`) — never `page.metrics()`, which is Chromium-only. Two tests:
+Navigation timing (`@performance`) is read through the standard cross-browser Web Performance API (`performance.getEntriesByType('navigation')`), never `page.metrics()`, which is Chromium-only. Two tests:
 
-- **Sanity ceiling** — the inventory page's DOM-content-loaded time stays under a generous bound for `standard_user`. A smoke alarm for pathological regressions, not an SLO: shared CI runners are too noisy for tight absolute thresholds.
-- **Seeded-glitch delta** — `performance_glitch_user` triggers a deliberate ~5s render busy-wait in the app; the test measures both roles in symmetric fresh contexts in the same run and asserts the glitch's wall-clock time-to-rendered measurably exceeds the standard one. The relative comparison is immune to runner speed, and time-to-rendered captures the delay on every engine (whether the busy-wait lands before or after DOMContentLoaded is engine-dependent).
+- **Sanity ceiling**: the inventory page's DOM-content-loaded time stays under a generous bound for `standard_user`. It is a smoke alarm for pathological regressions, not an SLO, since shared CI runners are too noisy for tight absolute thresholds.
+- **Seeded-glitch delta**: `performance_glitch_user` triggers a deliberate ~5s render busy-wait in the app; the test measures both roles in symmetric fresh contexts in the same run and asserts the glitch's wall-clock time-to-rendered measurably exceeds the standard one. The relative comparison is immune to runner speed, and time-to-rendered captures the delay on every engine (whether the busy-wait lands before or after DOMContentLoaded is engine-dependent).
 
 Measured values attach to the HTML report as annotations on every run. Thresholds live in `test-data/performance.ts` with a rationale comment each.
 
@@ -379,7 +379,7 @@ playwright-web-automation-ts/
 
 ## Contributing
 
-Pre-commit hooks run automatically on every `git commit` via Husky and lint-staged. Staged `.ts` files are linted (`eslint --fix`) and formatted (`prettier --write`) before the commit is created. No manual step required — hooks run transparently.
+Pre-commit hooks run automatically on every `git commit` via Husky and lint-staged. Staged `.ts` files are linted (`eslint --fix`) and formatted (`prettier --write`) before the commit is created. No manual step required; hooks run transparently.
 
 Dependencies are kept up to date automatically via [Dependabot](https://docs.github.com/en/code-security/dependabot), which raises weekly PRs for npm packages, GitHub Actions, and the Docker base image.
 
@@ -387,9 +387,9 @@ Dependencies are kept up to date automatically via [Dependabot](https://docs.git
 
 Every push and pull request to `main` runs:
 
-1. **Lint & type-check** — `typecheck`, `lint`, `format:check` must pass before tests run
-2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
-3. **Publish report** — on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
+1. **Lint & type-check**: `typecheck`, `lint`, `format:check` must pass before tests run
+2. **Test (matrix)**: Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
+3. **Publish report**: on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
 
 A weekly scheduled run (Mondays 06:00 UTC) re-runs the full matrix against the live demo site. Since saucedemo.com is a third-party site that can change between our commits, this run catches upstream drift or dependency rot even when nobody has pushed, so the status badge stays trustworthy. It only validates; it never republishes the report. A `concurrency` guard cancels superseded runs on the same PR, but leaves push and scheduled runs alone since they may be mid-deploy to Pages.
 
@@ -397,12 +397,12 @@ The password is injected from a GitHub Actions secret and the usernames from Act
 
 ## AI agent support
 
-This repo includes first-class support for AI coding assistants:
+This repo includes dedicated support for AI coding assistants:
 
-- [`AGENTS.md`](AGENTS.md) — the single source of truth for project conventions, run commands, selector strategy, and best practices. Readable by any AI assistant (Cursor, Copilot, Claude, etc.)
-- [`CLAUDE.md`](CLAUDE.md) — a Claude Code-specific pointer to `AGENTS.md`
-- [`.claude/PLAN.md`](.claude/PLAN.md) — full 20-PR implementation roadmap with per-PR file lists and rationale
+- [`AGENTS.md`](AGENTS.md): the single source of truth for project conventions, run commands, selector strategy, and best practices. Readable by any AI assistant (Cursor, Copilot, Claude, etc.)
+- [`CLAUDE.md`](CLAUDE.md): a Claude Code-specific pointer to `AGENTS.md`
+- [`.claude/PLAN.md`](.claude/PLAN.md): full 20-PR implementation roadmap with per-PR file lists and rationale
 
 ## License
 
-Released under the [ISC License](LICENSE) — © 2026 Qasim Mahmood.
+Released under the [ISC License](LICENSE). © 2026 Qasim Mahmood.
