@@ -7,6 +7,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['html']] : [['list'], ['html']],
+  expect: {
+    // Visual baselines are generated and compared on identical ubuntu-latest
+    // runners, so drift is limited to antialiasing jitter — real regressions
+    // flip thousands of pixels
+    toHaveScreenshot: { maxDiffPixels: 100 },
+  },
   use: {
     baseURL: config.url,
     testIdAttribute: 'data-test',

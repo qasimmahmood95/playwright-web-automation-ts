@@ -92,6 +92,7 @@ npm run test:report
 npm run test:smoke
 npm run test:regression
 npm run test:a11y
+npm run test:visual
 ```
 
 ## Code quality
@@ -169,6 +170,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 | `@smoke`      | Critical-path user journeys — login, add to cart, checkout. Fast signal on every change. |
 | `@regression` | The full functional suite. Every functional test carries it.                             |
 | `@a11y`       | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.     |
+| `@visual`     | Full-page screenshot comparisons against CI-generated Linux baselines. Non-functional.   |
 
 Tags are applied through the test's `{ tag: [...] }` option — never encoded in describe-block names or titles:
 
@@ -176,7 +178,7 @@ Tags are applied through the test's `{ tag: [...] }` option — never encoded in
 test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => { ... });
 ```
 
-Future suites from the [roadmap](ROADMAP.md) (`@visual`, `@performance`) will follow the same scheme.
+Future suites from the [roadmap](ROADMAP.md) (`@performance`) will follow the same scheme.
 
 ```bash
 # Critical-path journeys only
@@ -187,9 +189,12 @@ npm run test:regression   # playwright test --grep @regression
 
 # Accessibility scans
 npm run test:a11y         # playwright test --grep @a11y
+
+# Visual regression
+npm run test:visual       # playwright test --grep @visual
 ```
 
-> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y` is the first, with `@visual` and `@performance` to follow.
+> `test:regression` matches the full functional suite by design — every functional test carries the tag. Non-functional suites carry their own tags: `@a11y` and `@visual` have landed; `@performance` follows.
 
 ### Test design principles
 
@@ -209,11 +214,24 @@ SauceDemo ships real accessibility defects, so the suite asserts **no new violat
 SauceDemo is a fully client-side React app — login and inventory ship inside the JS bundle, with no auth or product APIs — so network tests target the traffic that actually exists: static bundles, product images, and third-party requests. Four `@regression` tests use `page.route()` interception:
 
 - Product images **aborted** — the page must stay fully functional with broken images
-- Product images **stubbed** with a deterministic placeholder — the binary-response pattern visual tests will reuse
+- Product images **stubbed** with a deterministic placeholder — a reusable binary-response stubbing pattern
 - All **cross-origin traffic blocked** — the app must never depend on third-party availability
 - **Injected latency** on product images — the page must still reach a usable state
 
 Interception helpers live in `utils/network.ts`; route patterns and latency constants are typed test data in `test-data/routes.ts`. Every interception test asserts its intercept counter fired, so route-pattern drift fails loudly instead of silently passing.
+
+### Visual regression
+
+Full-page screenshot tests (`@visual`) cover five states: login, inventory as `standard_user`, inventory as `problem_user` (capturing its known same-image-everywhere defect), cart with an item, and checkout step one.
+
+Baselines are **Linux-only and generated exclusively in CI**: the manually dispatched **Update visual snapshots** workflow runs `--update-snapshots` on the target branch, commits the PNGs as `github-actions[bot]`, and re-dispatches the test workflow so the new head SHA still gets a full CI run (a plain `GITHUB_TOKEN` push doesn't retrigger PR checks, but a token-created `workflow_dispatch` does). Locally generated macOS/Windows baselines are gitignored — don't run `@visual` locally unless you're on Linux with matching browser builds.
+
+When a dependency bump or a site deploy legitimately changes rendering, the visual jobs go red until someone dispatches the update workflow on that branch and reviews the baseline diff image-by-image. That is the intended re-baseline loop, not a flake.
+
+```bash
+npm run test:visual          # compare against committed baselines
+npm run test:visual:update   # regenerate baselines (CI/Linux only)
+```
 
 ## Project structure
 
@@ -240,7 +258,9 @@ playwright-web-automation-ts/
 │   ├── products.test.ts
 │   ├── checkout.test.ts
 │   ├── accessibility.test.ts # WCAG scans of the journey pages
-│   └── network.test.ts       # Network interception and resilience tests
+│   ├── network.test.ts       # Network interception and resilience tests
+│   ├── visual.test.ts        # Full-page screenshot comparisons
+│   └── visual.test.ts-snapshots/ # CI-generated Linux baselines
 ├── utils/
 │   ├── a11y.ts               # axe-core scan helper with baseline filtering
 │   ├── auth.ts               # Auth roles and storage-state file paths
