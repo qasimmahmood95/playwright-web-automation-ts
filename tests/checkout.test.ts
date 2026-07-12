@@ -1,6 +1,6 @@
 import { test } from '@/fixtures';
 import { CheckoutData, InvalidCheckoutScenarios } from '@/test-data/checkout';
-import { Products } from '@/utils/helpers';
+import { Products } from '@/test-data/products';
 
 test.beforeEach(async ({ page, loginPage }, testInfo) => {
   console.log(`Running ${testInfo.title}`);

@@ -1,5 +1,5 @@
 import { expect, test } from '@/fixtures';
-import { Products } from '@/utils/helpers';
+import { Products } from '@/test-data/products';
 
 // Baselines are Linux-only and generated exclusively by the update-snapshots
 // workflow (see README "Visual regression") — never regenerate them locally.

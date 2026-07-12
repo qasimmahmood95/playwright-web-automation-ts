@@ -309,7 +309,8 @@ playwright-web-automation-ts/
 │   ├── checkout.ts           # Valid and invalid checkout form scenarios
 │   ├── a11y.ts               # Known accessibility violations baseline
 │   ├── routes.ts             # Route patterns and traffic-shaping constants
-│   └── performance.ts        # Timing thresholds with rationale comments
+│   ├── performance.ts        # Timing thresholds with rationale comments
+│   └── products.ts           # Product slug constants (Products)
 ├── tests/                    # Test specs
 │   ├── global.setup.ts       # storageState authentication setup
 │   ├── login.test.ts
@@ -323,7 +324,6 @@ playwright-web-automation-ts/
 ├── utils/
 │   ├── a11y.ts               # axe-core scan helper with baseline filtering
 │   ├── auth.ts               # Auth roles and storage-state file paths
-│   ├── helpers.ts            # Product slug constants (Products)
 │   ├── network.ts            # Route-interception helpers with intercept counters
 │   └── performance.ts        # Navigation-timing measurement helpers
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
