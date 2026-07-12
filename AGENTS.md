@@ -166,6 +166,7 @@ GitHub Actions runs on push to `main` and on pull requests. The pipeline:
 1. Runs `typecheck`, `lint`, and `format:check` (gates the test job)
 2. Runs tests in parallel across Chromium, Firefox, and WebKit
 3. Uploads HTML reports as artifacts (30-day retention)
+4. On green `main` builds, merges the per-browser blob reports into one HTML report and deploys it to GitHub Pages (`publish-report` job — least-privilege `pages`/`id-token` scopes, main-push only)
 
 `SAUCEDEMO_PASSWORD` is a GitHub Actions secret. `SAUCEDEMO_USERNAME`, `SAUCEDEMO_LOCKED_USERNAME`, and `SAUCEDEMO_PROBLEM_USERNAME` are Actions variables (non-sensitive, public demo site values).
 

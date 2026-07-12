@@ -3,6 +3,9 @@
 Production-ready Playwright test suite for the [SauceDemo](https://www.saucedemo.com/) e-commerce flow, built with TypeScript.
 
 [![Playwright Tests](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml/badge.svg)](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml)
+[![Live report](https://img.shields.io/badge/live%20report-Playwright-2EAD33?logo=playwright)](https://qasimmahmood95.github.io/playwright-web-automation-ts/)
+
+📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)** — the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
 
 ## Tech stack
 
@@ -341,12 +344,13 @@ Dependencies are kept up to date automatically via [Dependabot](https://docs.git
 
 ## CI/CD
 
-Every push and pull request to `main` runs two jobs:
+Every push and pull request to `main` runs:
 
 1. **Lint & type-check** — `typecheck`, `lint`, `format:check` must pass before tests run
-2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention)
+2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
+3. **Publish report** — on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
 
-Credentials are injected from GitHub Actions secrets. HTML reports are available under **Actions → run → Artifacts**.
+Credentials are injected from GitHub Actions secrets. Per-run per-browser HTML reports are also available under **Actions → run → Artifacts**.
 
 ## AI agent support
 
