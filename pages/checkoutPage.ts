@@ -11,6 +11,7 @@ export default class CheckoutPage {
   readonly totalInfo: Locator;
   readonly finishButton: Locator;
   readonly orderConfirmation: Locator;
+  readonly errorMessage: Locator;
 
   constructor(public page: Page) {
     this.checkoutButton = page.getByTestId('checkout');
@@ -23,6 +24,7 @@ export default class CheckoutPage {
     this.totalInfo = page.getByTestId('total-info-label');
     this.finishButton = page.getByTestId('finish');
     this.orderConfirmation = page.getByTestId('complete-header');
+    this.errorMessage = page.getByTestId('error');
   }
 
   async clickCheckoutButton() {
@@ -41,8 +43,19 @@ export default class CheckoutPage {
     await this.postalCodeTextField.fill(postalCode);
   }
 
+  async fillInformation(info: { firstName: string; lastName: string; postalCode: string }) {
+    await this.enterFirstName(info.firstName);
+    await this.enterLastName(info.lastName);
+    await this.enterPostalCode(info.postalCode);
+  }
+
   async clickContinueButton() {
     await this.continueButton.click();
+  }
+
+  async checkError(expected: string) {
+    await expect(this.errorMessage).toBeVisible();
+    await expect(this.errorMessage).toContainText(expected);
   }
 
   async checkCheckoutInfoPage() {

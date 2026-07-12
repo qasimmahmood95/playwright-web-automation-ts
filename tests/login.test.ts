@@ -13,17 +13,26 @@ test.beforeEach(async ({ page, loginPage }, testInfo) => {
   await loginPage.checkSwagLabsLogo();
 });
 
-test('Standard user can login', async ({ loginPage }) => {
-  await loginPage.enterUsername(username);
-  await loginPage.enterPassword(password);
-  await loginPage.clickLoginButton();
-  await loginPage.checkProductsTitle();
-  await loginPage.clickOpenSidebarMenuButton();
-  await loginPage.clickResetAppStateButton();
-  await loginPage.clickLogoutButton();
+test.describe('Successful login', () => {
+  // Teardown needs a signed-in session — skip it when the test itself failed,
+  // otherwise the sidebar lookup times out on the login page and buries the real error
+  test.afterEach(async ({ loginPage }, testInfo) => {
+    if (testInfo.status !== testInfo.expectedStatus) return;
+
+    await loginPage.clickOpenSidebarMenuButton();
+    await loginPage.clickResetAppStateButton();
+    await loginPage.clickLogoutButton();
+  });
+
+  test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => {
+    await loginPage.enterUsername(username);
+    await loginPage.enterPassword(password);
+    await loginPage.clickLoginButton();
+    await loginPage.checkProductsTitle();
+  });
 });
 
-test('Locked out user cannot login', async ({ loginPage }) => {
+test('Locked out user cannot login', { tag: '@regression' }, async ({ loginPage }) => {
   await loginPage.enterUsername(locked_username);
   await loginPage.enterPassword(password);
   await loginPage.clickLoginButton();
