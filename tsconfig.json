@@ -17,7 +17,8 @@
       "@/fixtures/*": ["./fixtures/*"],
       "@/test-data/*": ["./test-data/*"],
       "@/utils/*": ["./utils/*"],
-      "@/config/*": ["./config/*"]
+      "@/config/*": ["./config/*"],
+      "@/components/*": ["./components/*"]
     }
   },
   "include": [
@@ -27,6 +28,7 @@
     "test-data/**/*.ts",
     "utils/**/*.ts",
     "config/**/*.ts",
+    "components/**/*.ts",
     "*.ts"
   ],
   "exclude": ["node_modules", "dist"]

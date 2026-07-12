@@ -64,10 +64,8 @@ test.describe('Cart and checkout', () => {
     await productsPage.checkTitle('Your Cart');
   });
 
-  test.afterEach(async ({ loginPage }) => {
-    await loginPage.clickOpenSidebarMenuButton();
-    await loginPage.clickResetAppStateButton();
-    await loginPage.clickLogoutButton();
+  test.afterEach(async ({ appMenu }) => {
+    await appMenu.resetAppStateAndLogout();
   });
 
   test('Cart with an item matches baseline', { tag: '@visual' }, async ({ page }) => {

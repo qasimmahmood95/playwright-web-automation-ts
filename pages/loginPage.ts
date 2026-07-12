@@ -1,26 +1,21 @@
 import { Page, expect, Locator } from '@playwright/test';
+import HeaderComponent from '@/components/HeaderComponent';
 
 export default class LoginPage {
-  readonly swagLabsLogo: Locator;
+  readonly header: HeaderComponent;
   readonly usernameField: Locator;
   readonly passwordField: Locator;
   readonly loginButton: Locator;
   readonly productsTitle: Locator;
   readonly loginError: Locator;
-  readonly openSidebarMenuButton: Locator;
-  readonly resetAppStateButton: Locator;
-  readonly logoutButton: Locator;
 
   constructor(public page: Page) {
-    this.swagLabsLogo = page.getByText('Swag Labs');
+    this.header = new HeaderComponent(page);
     this.usernameField = page.getByTestId('username');
     this.passwordField = page.getByTestId('password');
     this.loginButton = page.getByTestId('login-button');
     this.productsTitle = page.getByTestId('title');
     this.loginError = page.getByTestId('error');
-    this.openSidebarMenuButton = page.getByRole('button', { name: 'Open Menu' });
-    this.resetAppStateButton = page.getByTestId('reset-sidebar-link');
-    this.logoutButton = page.getByTestId('logout-sidebar-link');
   }
 
   async login(username: string, password: string) {
@@ -42,20 +37,8 @@ export default class LoginPage {
     await this.loginButton.click();
   }
 
-  async clickOpenSidebarMenuButton() {
-    await this.openSidebarMenuButton.click();
-  }
-
-  async clickResetAppStateButton() {
-    await this.resetAppStateButton.click();
-  }
-
-  async clickLogoutButton() {
-    await this.logoutButton.click();
-  }
-
   async checkSwagLabsLogo() {
-    await expect(this.swagLabsLogo).toBeVisible();
+    await this.header.checkSwagLabsLogo();
   }
 
   async checkProductsTitle() {

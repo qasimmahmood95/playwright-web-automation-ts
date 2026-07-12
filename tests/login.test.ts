@@ -16,12 +16,10 @@ test.beforeEach(async ({ page, loginPage }, testInfo) => {
 test.describe('Successful login', () => {
   // Teardown needs a signed-in session — skip it when the test itself failed,
   // otherwise the sidebar lookup times out on the login page and buries the real error
-  test.afterEach(async ({ loginPage }, testInfo) => {
+  test.afterEach(async ({ appMenu }, testInfo) => {
     if (testInfo.status !== testInfo.expectedStatus) return;
 
-    await loginPage.clickOpenSidebarMenuButton();
-    await loginPage.clickResetAppStateButton();
-    await loginPage.clickLogoutButton();
+    await appMenu.resetAppStateAndLogout();
   });
 
   test('Standard user can login', { tag: ['@smoke', '@regression'] }, async ({ loginPage }) => {
