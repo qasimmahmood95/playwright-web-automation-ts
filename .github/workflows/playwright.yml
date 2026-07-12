@@ -7,10 +7,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Least privilege: the jobs only read the repo and upload artifacts (the
+# artifact API doesn't use the token's contents scope), so read-only is enough.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint & type-check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
