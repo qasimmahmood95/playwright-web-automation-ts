@@ -73,6 +73,22 @@ export default class ProductsPage {
     await expect(this.title).toContainText(title);
   }
 
+  // Anchored on attachment, not visibility — WebKit collapses a failed <img>
+  // to a zero-size box, and toHaveJSProperty only needs the element attached
+  async checkAllProductImagesBroken() {
+    await this.productImages.first().waitFor({ state: 'attached' });
+    for (const image of await this.productImages.all()) {
+      await expect(image).toHaveJSProperty('naturalWidth', 0);
+    }
+  }
+
+  async checkAllProductImagesRendered() {
+    await this.productImages.first().waitFor({ state: 'attached' });
+    for (const image of await this.productImages.all()) {
+      await expect(image).not.toHaveJSProperty('naturalWidth', 0);
+    }
+  }
+
   async getProductImageSources(): Promise<string[]> {
     // evaluateAll does not auto-wait, so wait for the grid to render first
     await this.productImages.first().waitFor();

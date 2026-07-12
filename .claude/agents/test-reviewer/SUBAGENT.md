@@ -37,6 +37,12 @@ When reviewing test files, check:
 - Every functional test is tagged `@regression`; critical-path journeys additionally carry `@smoke`; non-functional suites (`@a11y`) carry their own tag instead
 - Tags are set via the `{ tag: ['@smoke', '@regression'] }` test option — not encoded in describe block names or test titles
 
+## Network interception
+
+- Routes are registered before `page.goto()`; interception helpers come from `utils/network.ts` — no inline `page.route()` handlers in test bodies
+- No `expect()` inside route handlers; assert page state web-first, then intercept counters
+- Timers only inside network helpers (traffic shaping), never in test bodies
+
 ## Auth & state
 
 - Tests run as the `standard` role by default; role switching only via `test.use({ role: ... })`
