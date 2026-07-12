@@ -1,5 +1,5 @@
 import { Page, expect, Locator } from '@playwright/test';
-import { ProductId } from '@/utils/helpers';
+import { ProductId } from '@/test-data/products';
 import HeaderComponent from '@/components/HeaderComponent';
 
 export default class ProductsPage {

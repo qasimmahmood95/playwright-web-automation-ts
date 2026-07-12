@@ -1,6 +1,6 @@
 import { test } from '@/fixtures';
 import { expectNoNewA11yViolations } from '@/utils/a11y';
-import { Products } from '@/utils/helpers';
+import { Products } from '@/test-data/products';
 
 test.describe('Login page', () => {
   // The login scan must see the signed-out page

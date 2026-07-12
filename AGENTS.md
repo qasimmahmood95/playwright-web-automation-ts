@@ -20,7 +20,7 @@ playwright-web-automation-ts/
 ├── config/             # Environment config (env.ts reads from process.env)
 ├── fixtures/           # Playwright fixture extensions (page object injection)
 ├── pages/              # Page Object Model classes
-├── test-data/          # Typed constants (users, checkout scenarios, a11y baseline, route patterns)
+├── test-data/          # Typed constants (users, checkout scenarios, a11y baseline, route patterns, product slugs)
 ├── tests/              # Test files (.test.ts)
 ├── utils/              # Shared helpers and utilities
 ├── AGENTS.md           # This file
