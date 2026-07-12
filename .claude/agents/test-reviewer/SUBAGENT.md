@@ -34,7 +34,7 @@ When reviewing test files, check:
 
 ## Tagging
 
-- Every test is tagged `@regression`; critical-path journeys additionally carry `@smoke`
+- Every functional test is tagged `@regression`; critical-path journeys additionally carry `@smoke`; non-functional suites (`@a11y`) carry their own tag instead
 - Tags are set via the `{ tag: ['@smoke', '@regression'] }` test option — not encoded in describe block names or test titles
 
 ## Auth & state

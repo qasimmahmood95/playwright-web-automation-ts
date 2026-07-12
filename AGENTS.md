@@ -19,7 +19,7 @@ playwright-web-automation-ts/
 ├── config/             # Environment config (env.ts reads from process.env)
 ├── fixtures/           # Playwright fixture extensions (page object injection)
 ├── pages/              # Page Object Model classes
-├── test-data/          # Typed constants for users, checkout data, product slugs
+├── test-data/          # Typed constants (users, checkout scenarios, a11y baseline)
 ├── tests/              # Test files (.test.ts)
 ├── utils/              # Shared helpers and utilities
 ├── AGENTS.md           # This file
@@ -44,6 +44,9 @@ npm run test:smoke
 
 # Run the full tagged regression suite
 npm run test:regression
+
+# Run accessibility scans
+npm run test:a11y
 
 # Run with headed browser
 npm run test:headed
@@ -88,7 +91,7 @@ npm run format:check
 
 1. Create `tests/myFeature.test.ts`.
 2. Import `{ test, expect }` from `@/fixtures`.
-3. Tag every test `@regression`; critical-path journeys additionally get `@smoke`. Tags go through the `tag` test option — never in describe block names or test titles:
+3. Tag every functional test `@regression`; critical-path journeys additionally get `@smoke`; non-functional suites carry their own tag (`@a11y`). Tags go through the `tag` test option — never in describe block names or test titles:
 
    ```ts
    test('my test', { tag: ['@smoke', '@regression'] }, async ({ productsPage }) => { ... });
@@ -118,6 +121,7 @@ npm run format:check
 - **Waits:** never use `page.waitForTimeout()`. Use auto-waiting locator assertions (`expect(locator).toBeVisible()`) or `waitForLoadState('networkidle')` only when genuinely necessary.
 - **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
 - **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
+- **Accessibility:** a11y scans go through `utils/a11y.ts`; the known-violations baseline lives in `test-data/a11y.ts` with a comment per entry. Never use `disableRules()` to silence a finding.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
