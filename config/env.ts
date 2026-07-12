@@ -10,6 +10,7 @@ const config = {
   password: process.env.SAUCEDEMO_PASSWORD || 'secret_sauce',
   locked_username: process.env.SAUCEDEMO_LOCKED_USERNAME || 'locked_out_user',
   problem_username: process.env.SAUCEDEMO_PROBLEM_USERNAME || 'problem_user',
+  performance_username: process.env.SAUCEDEMO_PERFORMANCE_USERNAME || 'performance_glitch_user',
 };
 
 export default config;
