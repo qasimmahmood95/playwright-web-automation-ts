@@ -6,7 +6,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? [['github'], ['html']] : [['list'], ['html']],
+  // In CI: github annotations, a per-browser HTML report (uploaded as an
+  // artifact), and a blob report that the publish-report job merges across
+  // browsers into the single report deployed to GitHub Pages.
+  reporter: process.env.CI ? [['github'], ['html'], ['blob']] : [['list'], ['html']],
   expect: {
     // Visual baselines are generated and compared on identical ubuntu-latest
     // runners, so drift is limited to antialiasing jitter — real regressions
