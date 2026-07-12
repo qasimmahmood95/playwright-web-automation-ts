@@ -53,6 +53,35 @@ export default class CheckoutPage {
     await this.continueButton.click();
   }
 
+  /** Tab from the first-name field should land on last name, then postal code. */
+  async checkInformationFormTabOrder() {
+    await this.firstNameTextField.focus();
+    await expect(this.firstNameTextField).toBeFocused();
+
+    await this.page.keyboard.press('Tab');
+    await expect(this.lastNameTextField).toBeFocused();
+
+    await this.page.keyboard.press('Tab');
+    await expect(this.postalCodeTextField).toBeFocused();
+  }
+
+  /**
+   * Fill the form, then submit from the keyboard by focusing the Continue
+   * control and pressing Enter (no mouse click). Activating the focused button
+   * works whether Continue submits a native form or fires a click handler, so
+   * this stays robust across SauceDemo markup changes.
+   */
+  async submitInformationWithKeyboard(info: {
+    firstName: string;
+    lastName: string;
+    postalCode: string;
+  }) {
+    await this.fillInformation(info);
+    await this.continueButton.focus();
+    await expect(this.continueButton).toBeFocused();
+    await this.page.keyboard.press('Enter');
+  }
+
   async checkError(expected: string) {
     await expect(this.errorMessage).toBeVisible();
     await expect(this.errorMessage).toContainText(expected);

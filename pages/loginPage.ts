@@ -37,6 +37,25 @@ export default class LoginPage {
     await this.loginButton.click();
   }
 
+  /** Tab from the username field should land on password, then the login button. */
+  async checkKeyboardTabOrder() {
+    await this.usernameField.focus();
+    await expect(this.usernameField).toBeFocused();
+
+    await this.page.keyboard.press('Tab');
+    await expect(this.passwordField).toBeFocused();
+
+    await this.page.keyboard.press('Tab');
+    await expect(this.loginButton).toBeFocused();
+  }
+
+  /** Fill both fields and submit with Enter from the password field, no button click. */
+  async loginWithEnterKey(username: string, password: string) {
+    await this.enterUsername(username);
+    await this.enterPassword(password);
+    await this.page.keyboard.press('Enter');
+  }
+
   async checkSwagLabsLogo() {
     await this.header.checkSwagLabsLogo();
   }
