@@ -391,6 +391,8 @@ Every push and pull request to `main` runs:
 2. **Test (matrix)** — Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
 3. **Publish report** — on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
 
+A **weekly canary** (Mondays 06:00 UTC via `schedule:`) re-runs the full matrix against the live demo site, catching upstream saucedemo drift or dependency rot while the repo is dormant so the status badge stays honest — validation only, it never republishes the report. A `concurrency` guard cancels superseded runs for the _same PR_ (but never push or scheduled runs, which may be mid-deploy to Pages).
+
 The password is injected from a GitHub Actions secret and the usernames from Actions variables (see [Environment variables](#environment-variables)). Per-run per-browser HTML reports are also available under **Actions → run → Artifacts**.
 
 ## AI agent support
