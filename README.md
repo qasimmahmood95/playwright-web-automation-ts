@@ -116,6 +116,36 @@ npm run format
 npm run format:check
 ```
 
+## Docker
+
+The suite runs in a container built on [`mcr.microsoft.com/playwright`](https://mcr.microsoft.com/en-us/product/playwright/about), pinned to the same Playwright version as `package-lock.json`. The image bundles Node, all three browser engines, and their system dependencies, so there is no local `npx playwright install` step. It renders on the same Ubuntu/Playwright-on-Linux platform as CI, so it is the closest local environment for running the `@visual` suite from macOS or Windows, where native rendering never matches the Linux baselines.
+
+```bash
+# Build the image and run the full suite inside it
+npm run test:docker
+```
+
+| Concern     | Handling                                                                                                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------- |
+| Browsers    | Bundled in the base image — no `npx playwright install` step.                                              |
+| Credentials | Public demo defaults come from `config/env.ts`; override at runtime with `--env-file .env`, never a layer. |
+| Platform    | Linux, matching CI — the closest local environment to reproduce a CI-only failure.                         |
+| HTML report | Written inside the container; mount a volume to keep it on the host (see below).                           |
+
+To exercise non-default credentials, pass your local `.env` at runtime — the same file used for local runs, never copied into the image (`.dockerignore` excludes it):
+
+```bash
+docker run --rm --env-file .env playwright-web-automation-ts
+```
+
+The HTML report is written inside the container and discarded when it exits. To keep it, mount a host directory over the report path (files land root-owned, since the container runs as root):
+
+```bash
+docker run --rm -v "$(pwd)/playwright-report:/app/playwright-report" playwright-web-automation-ts
+```
+
+This is a **local convenience, not a change to CI** — the pipeline still runs on `ubuntu-latest` with npx-installed browsers. The `@visual` suite compares against the CI-generated `-linux` baselines; whether they match inside the container depends on the image rendering identically to the runner (same platform, but not guaranteed byte-identical). Treat any Docker-only `@visual` diffs as environment noise, and never commit baselines the container produces — the canonical Linux baselines are generated exclusively by the `update-snapshots.yml` workflow (see [Visual regression](#visual-regression)), and the container's snapshots carry the same `-linux` suffix, so `.gitignore` (which only excludes `-darwin`/`-win32`) will not stop an accidental commit. Keep the Dockerfile's base-image tag in lockstep with the `@playwright/test` version — a version skew changes the browser builds.
+
 ## Architecture
 
 ### Page Object Model
@@ -237,6 +267,8 @@ npm run test:visual          # compare against committed baselines
 npm run test:visual:update   # regenerate baselines (CI/Linux only)
 ```
 
+To run `@visual` locally on a non-Linux machine, use the [Docker image](#docker) — it renders on the same Ubuntu/Playwright platform as CI. Do not commit baselines it produces; re-baselining stays with the update workflow.
+
 ### Performance
 
 Navigation timing (`@performance`) is read through the standard cross-browser Web Performance API (`performance.getEntriesByType('navigation')`) — never `page.metrics()`, which is Chromium-only. Two tests:
@@ -255,6 +287,7 @@ npm run test:performance   # playwright test --grep @performance
 ```text
 playwright-web-automation-ts/
 ├── .claude/                  # AI tooling context (full implementation plan)
+├── .dockerignore             # Files excluded from the Docker build context (node_modules, .env, reports)
 ├── .github/workflows/        # CI/CD pipeline
 ├── config/
 │   └── env.ts                # Environment variable helpers
@@ -288,6 +321,7 @@ playwright-web-automation-ts/
 │   └── performance.ts        # Navigation-timing measurement helpers
 ├── AGENTS.md                 # AI agent instructions (conventions, selectors, what not to do)
 ├── CLAUDE.md                 # Claude Code pointer to AGENTS.md
+├── Dockerfile                # Containerised test run on the Playwright Linux base image
 ├── ROADMAP.md                # 20-PR improvement roadmap
 └── playwright.config.ts
 ```
@@ -296,7 +330,7 @@ playwright-web-automation-ts/
 
 Pre-commit hooks run automatically on every `git commit` via Husky and lint-staged. Staged `.ts` files are linted (`eslint --fix`) and formatted (`prettier --write`) before the commit is created. No manual step required — hooks run transparently.
 
-Dependencies are kept up to date automatically via [Dependabot](https://docs.github.com/en/code-security/dependabot), which raises weekly PRs for npm packages and GitHub Actions.
+Dependencies are kept up to date automatically via [Dependabot](https://docs.github.com/en/code-security/dependabot), which raises weekly PRs for npm packages, GitHub Actions, and the Docker base image.
 
 ## CI/CD
 

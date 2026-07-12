@@ -15,3 +15,11 @@ updates:
     target-branch: main
     labels:
       - dependencies
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: main
+    labels:
+      - dependencies

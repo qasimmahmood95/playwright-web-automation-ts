@@ -24,6 +24,7 @@ playwright-web-automation-ts/
 ├── utils/              # Shared helpers and utilities
 ├── AGENTS.md           # This file
 ├── CLAUDE.md           # Pointer to this file
+├── Dockerfile          # Containerised test run (Playwright Linux base image)
 ├── ROADMAP.md          # High-level 20-PR improvement roadmap
 └── playwright.config.ts
 ```
@@ -63,6 +64,9 @@ npm run test:ui
 # Open HTML report
 npm run test:report
 
+# Run the full suite in Docker (bundled browsers, matches the CI Linux platform)
+npm run test:docker
+
 # Type-check
 npm run typecheck
 
@@ -82,6 +86,8 @@ npm run format:check
 > **Environment variables:** copy `.env.example` to `.env` and fill in credentials before running locally. Never hardcode credentials anywhere in the codebase.
 
 > **Pre-commit hooks:** Husky runs `lint-staged` on every `git commit`. Staged `.ts` files are auto-fixed by ESLint and formatted by Prettier before the commit is created. Never bypass hooks with `--no-verify`.
+
+> **Docker:** the full suite also runs in a container via `npm run test:docker`. The image builds on `mcr.microsoft.com/playwright`, so it bundles all three browsers (no `npx playwright install`) and matches the CI Linux platform — use it to reproduce a CI-only failure or run `@visual` locally on macOS/Windows. Credentials pass through at runtime with `--env-file .env`; they are never baked into an image. See the [Docker section in the README](README.md#docker).
 
 ---
 
@@ -128,7 +134,8 @@ npm run format:check
 - **Locators:** page objects own all locators — test files never call `page.locator()` or `getBy*` directly.
 - **Teardown:** reset-app-state/logout teardown only on tests that mutate state; read-only tests get none.
 - **Accessibility:** a11y scans go through `utils/a11y.ts`; the known-violations baseline lives in `test-data/a11y.ts` with a comment per entry. Never use `disableRules()` to silence a finding.
-- **Visual baselines:** Linux-only, generated exclusively by the `update-snapshots.yml` workflow — never hand-edit PNGs or commit locally generated snapshots (darwin/win32 are gitignored). Re-baseline via the workflow and review baseline-diff commits image-by-image.
+- **Visual baselines:** Linux-only, generated exclusively by the `update-snapshots.yml` workflow on the CI runner — never hand-edit PNGs or commit locally generated snapshots. macOS/Windows baselines (`-darwin`/`-win32`) are gitignored; Docker-generated `-linux` baselines are **not** gitignored (they share the CI suffix) but must never be committed either — the container is a faithful CI-platform _runner_, not an authoritative baseline _generator_. Re-baseline via the workflow and review baseline-diff commits image-by-image.
+- **Docker:** `npm run test:docker` runs the suite in a Linux container (`FROM mcr.microsoft.com/playwright:v1.61.1-noble`, pinned to the same Playwright version as `package-lock.json`) that mirrors the CI platform. Use it to reproduce and debug `@visual` runs locally on macOS/Windows. CI itself does **not** run in this container — it stays on `ubuntu-latest` with npx-installed browsers. Keep the Dockerfile `FROM` tag on the same Playwright version as `package-lock.json` (Dependabot's docker ecosystem bumps it); bump both together.
 - **Performance:** measurement helpers live in `utils/performance.ts`, thresholds in `test-data/performance.ts` with a rationale comment each. Use the cross-browser navigation-timing API, never `page.metrics()`. Absolute thresholds are generous sanity ceilings, never tight SLOs — shared CI runners are noisy; prefer same-run relative comparisons for seeded-behaviour assertions.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
