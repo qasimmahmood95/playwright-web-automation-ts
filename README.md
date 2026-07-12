@@ -29,7 +29,7 @@ Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com
 
 ## Highlights
 
-**26 tests across 7 spec files**, each executed on 3 browser engines (Chromium, Firefox, and WebKit) for 78 cross-browser runs, spanning 5 tagged dimensions (`@smoke`, `@regression`, `@a11y`, `@visual`, `@performance`).
+**30 tests across 8 spec files**, each executed on 3 browser engines (Chromium, Firefox, and WebKit) for 90 cross-browser runs, spanning 5 tagged dimensions (`@smoke`, `@regression`, `@a11y`, `@visual`, `@performance`).
 
 The suite covers functional, accessibility, visual, and performance testing:
 
@@ -249,7 +249,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 | -------------- | ---------------------------------------------------------------------------------------------- |
 | `@smoke`       | Critical-path user journeys: login, add to cart, checkout. Fast signal on every change.        |
 | `@regression`  | The full functional suite. Every functional test carries it.                                   |
-| `@a11y`        | Automated WCAG 2.0/2.1 A + AA scans (axe-core) of the journey pages. Non-functional.           |
+| `@a11y`        | axe-core WCAG scans plus keyboard-operability checks on the journey pages. Non-functional.     |
 | `@visual`      | Full-page screenshot comparisons against CI-generated Linux baselines. Non-functional.         |
 | `@performance` | Cross-browser navigation-timing checks (sanity ceiling + seeded-glitch delta). Non-functional. |
 
@@ -290,6 +290,8 @@ npm run test:performance    # playwright test --grep @performance
 Automated WCAG 2.0/2.1 A + AA scans run through [axe-core](https://github.com/dequelabs/axe-core) (`@axe-core/playwright`) against the four journey pages: login (signed out), inventory, cart (with an item), and checkout step one.
 
 SauceDemo ships real accessibility defects, so the suite asserts **no new violations** rather than zero: known rule failures are pinned per page in `test-data/a11y.ts`, each with a comment naming the defect. A scan fails only on violations outside that baseline, and baselined rules that stop firing are soft-flagged as report annotations so the baseline can shrink over time. Full axe results are attached to the HTML report for every scan.
+
+Static scans can't verify keyboard operability, so `keyboard-navigation.test.ts` complements them: it drives the login and checkout forms with Tab and Enter only, asserting a logical focus order and that both forms submit without a mouse click.
 
 ### Network resilience
 
@@ -361,6 +363,7 @@ playwright-web-automation-ts/
 │   ├── products.test.ts
 │   ├── checkout.test.ts
 │   ├── accessibility.test.ts # WCAG scans of the journey pages
+│   ├── keyboard-navigation.test.ts # Keyboard tab order + Enter-submit checks
 │   ├── network.test.ts       # Network interception and resilience tests
 │   ├── visual.test.ts        # Full-page screenshot comparisons
 │   ├── visual.test.ts-snapshots/ # CI-generated Linux baselines
