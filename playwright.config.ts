@@ -62,5 +62,16 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
       dependencies: ['setup:webkit'],
     },
+
+    // Mobile smoke coverage: the critical-path journey on a touch viewport.
+    // Pixel 7 runs on chromium, so this reuses the chromium auth state. Scoped
+    // to @smoke only; @visual, @a11y, and @performance stay on the desktop
+    // projects, since mobile would need its own baselines and thresholds.
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 7'] },
+      dependencies: ['setup:chromium'],
+      grep: /@smoke/,
+    },
   ],
 });

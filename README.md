@@ -29,7 +29,7 @@ Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com
 
 ## Highlights
 
-**30 tests across 8 spec files**, each executed on 3 browser engines (Chromium, Firefox, and WebKit) for 90 cross-browser runs, spanning 5 tagged dimensions (`@smoke`, `@regression`, `@a11y`, `@visual`, `@performance`).
+**30 tests across 8 spec files**, each executed on 3 browser engines (Chromium, Firefox, and WebKit) for 90 cross-browser runs, plus the critical `@smoke` journey on a mobile (Pixel 7) viewport, spanning 5 tagged dimensions (`@smoke`, `@regression`, `@a11y`, `@visual`, `@performance`).
 
 The suite covers functional, accessibility, visual, and performance testing:
 
@@ -139,6 +139,9 @@ npm run test:regression
 npm run test:a11y
 npm run test:visual
 npm run test:performance
+
+# Critical journey on a mobile (Pixel 7) viewport
+npm run test:mobile
 ```
 
 ## Code quality
@@ -332,6 +335,14 @@ Measured values attach to the HTML report as annotations on every run. Threshold
 npm run test:performance   # playwright test --grep @performance
 ```
 
+### Mobile
+
+A dedicated `Mobile Chrome` project runs the critical-path `@smoke` journey on an emulated [Pixel 7](https://playwright.dev/docs/emulation) viewport (412x839, touch enabled), proving the login, browse, cart, and checkout flow works on a phone-sized layout. It runs on the chromium binary, so it reuses the chromium auth state and needs no extra setup. Only `@smoke` runs here: `@visual`, `@a11y`, and `@performance` stay on the desktop projects, since a mobile viewport would need its own screenshot baselines and timing thresholds.
+
+```bash
+npm run test:mobile   # playwright test --project="Mobile Chrome"
+```
+
 ## Project structure
 
 ```text
@@ -394,7 +405,7 @@ Dependencies are kept up to date automatically via [Dependabot](https://docs.git
 Every push and pull request to `main` runs:
 
 1. **Lint & type-check**: `typecheck`, `lint`, `format:check` must pass before tests run
-2. **Test (matrix)**: Chromium, Firefox, and WebKit run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
+2. **Test (matrix)**: Chromium, Firefox, WebKit, and a mobile (Pixel 7) smoke job run in parallel; each uploads its own HTML report as an artifact (30-day retention) plus a blob report for merging
 3. **Publish report**: on green `main` builds only, the three browsers' blob reports are merged into one HTML report and deployed to [GitHub Pages](https://qasimmahmood95.github.io/playwright-web-automation-ts/), so the latest results are viewable in-browser without downloading an artifact
 
 A weekly scheduled run (Mondays 06:00 UTC) re-runs the full matrix against the live demo site. Since saucedemo.com is a third-party site that can change between our commits, this run catches upstream drift or dependency rot even when nobody has pushed, so the status badge stays trustworthy. It only validates; it never republishes the report. A `concurrency` guard cancels superseded runs on the same PR, but leaves push and scheduled runs alone since they may be mid-deploy to Pages.
