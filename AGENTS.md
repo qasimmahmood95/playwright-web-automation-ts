@@ -56,6 +56,9 @@ npm run test:visual
 # Run performance checks
 npm run test:performance
 
+# Run the critical @smoke journey on a mobile (Pixel 7) viewport
+npm run test:mobile
+
 # Run with headed browser
 npm run test:headed
 
@@ -139,6 +142,7 @@ npm run format:check
 - **Visual baselines:** Linux-only, generated exclusively by the `update-snapshots.yml` workflow on the CI runner — never hand-edit PNGs or commit locally generated snapshots. macOS/Windows baselines (`-darwin`/`-win32`) are gitignored; Docker-generated `-linux` baselines are **not** gitignored (they share the CI suffix) but must never be committed either — the container is a faithful CI-platform _runner_, not an authoritative baseline _generator_. Re-baseline via the workflow and review baseline-diff commits image-by-image.
 - **Docker:** `npm run test:docker` runs the suite in a Linux container (`FROM mcr.microsoft.com/playwright:v1.61.1-noble`, pinned to the same Playwright version as `package-lock.json`) that mirrors the CI platform. Use it to reproduce and debug `@visual` runs locally on macOS/Windows. CI itself does **not** run in this container — it stays on `ubuntu-latest` with npx-installed browsers. Keep the Dockerfile `FROM` tag on the same Playwright version as `package-lock.json` (Dependabot's docker ecosystem bumps it); bump both together.
 - **Performance:** measurement helpers live in `utils/performance.ts`, thresholds in `test-data/performance.ts` with a rationale comment each. Use the cross-browser navigation-timing API, never `page.metrics()`. Absolute thresholds are generous sanity ceilings, never tight SLOs — shared CI runners are noisy; prefer same-run relative comparisons for seeded-behaviour assertions.
+- **Mobile:** the `Mobile Chrome` project (`devices['Pixel 7']`) runs the `@smoke` journey on a touch viewport. It runs on the chromium binary, so it reuses the `setup:chromium` auth state (no new setup project). Keep it scoped to `@smoke` via the project's `grep`: `@visual`, `@a11y`, and `@performance` stay desktop-only, since a mobile viewport would need its own baselines and thresholds. In CI it is a matrix entry that installs chromium and runs `--project="Mobile Chrome"`.
 - **Strict equality:** always use `===` / `!==`, never `==` / `!=`.
 - **Lint/format:** `eslint` and `prettier` are enforced via pre-commit hooks. Do not bypass with `--no-verify`.
 - **Path aliases:** import from `@/pages`, `@/components`, `@/fixtures`, `@/test-data`, `@/utils`, `@/config` — not via deep relative paths.
@@ -165,7 +169,7 @@ npm run format:check
 GitHub Actions runs on push to `main`, on pull requests, and on a weekly schedule. The pipeline:
 
 1. Runs `typecheck`, `lint`, and `format:check` (gates the test job)
-2. Runs tests in parallel across Chromium, Firefox, and WebKit
+2. Runs tests in parallel across Chromium, Firefox, and WebKit, plus a mobile (Pixel 7) job that runs the `@smoke` journey on the chromium binary
 3. Uploads HTML reports as artifacts (30-day retention)
 4. On green `main` builds, merges the per-browser blob reports into one HTML report and deploys it to GitHub Pages (`publish-report` job — least-privilege `pages`/`id-token` scopes, main-push only)
 
