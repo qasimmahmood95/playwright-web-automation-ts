@@ -5,7 +5,7 @@ Production-ready Playwright test suite for [SauceDemo](https://www.saucedemo.com
 [![Playwright Tests](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml/badge.svg)](https://github.com/qasimmahmood95/playwright-web-automation-ts/actions/workflows/playwright.yml)
 [![Live report](https://img.shields.io/badge/live%20report-Playwright-2EAD33?logo=playwright)](https://qasimmahmood95.github.io/playwright-web-automation-ts/)
 [![Node.js](https://img.shields.io/badge/node-24-339933?logo=node.js&logoColor=white)](.nvmrc)
-[![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 📊 **[View the live test report →](https://qasimmahmood95.github.io/playwright-web-automation-ts/)**: the merged Chromium/Firefox/WebKit HTML report from the latest `main` build, published to GitHub Pages.
 
@@ -422,4 +422,4 @@ This repo includes dedicated support for AI coding assistants:
 
 ## License
 
-Released under the [ISC License](LICENSE). © 2026 Qasim Mahmood.
+Released under the [MIT License](LICENSE). © 2026 Qasim Mahmood.
