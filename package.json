@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "End-to-end test suite for saucedemo.com built with Playwright and TypeScript",
   "author": "Qasim Mahmood",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
