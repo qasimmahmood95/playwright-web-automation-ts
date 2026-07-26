@@ -37,7 +37,7 @@
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.1",
     "dotenv": "^17.4.2",
-    "eslint": "^10.7.0",
+    "eslint": "^10.8.0",
     "eslint-plugin-playwright": "^2.10.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.1.0",
