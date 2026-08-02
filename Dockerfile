@@ -7,7 +7,7 @@
 # would redownload identical binaries and can mask a version mismatch). Distro `-noble`
 # (Ubuntu 24.04) matches the ubuntu-latest CI runners. Keep this tag in lockstep with
 # @playwright/test — Dependabot's docker ecosystem (.github/dependabot.yml) bumps it.
-FROM mcr.microsoft.com/playwright:v1.61.1-noble
+FROM mcr.microsoft.com/playwright:v1.62.1-noble
 
 # CI=true  -> mirrors the process.env.CI branches in playwright.config.ts (2 retries,
 #             github+html reporters, forbidOnly, and html reporter open:never so a
